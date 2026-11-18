@@ -18,6 +18,11 @@
         "entitySet": { "$ref": "#/definitions/identifier" },
         "shortName": { "type": "string", "pattern": "^[A-Z][A-Z0-9]{0,7}$" },
         "namespacePrefix": { "type": "string", "pattern": "^[ZY][A-Z0-9]{0,4}$" },
+        "uiMode": {
+          "enum": ["adt-preview", "standalone"],
+          "default": "adt-preview",
+          "description": "Default to RAP objects, UI annotations, and ADT preview instructions. Generate standalone frontend projects only when explicitly selected."
+        },
         "outputDirectory": { "type": "string", "minLength": 1 }
       }
     },

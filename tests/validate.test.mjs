@@ -57,6 +57,18 @@ test("non-analytical transactional applications need no analytics or overview", 
   assert.deepEqual(validateProject(config), []);
 });
 
+test("UI scope stays optional and rejects unsupported generation intents", () => {
+  const config = fresh();
+  assert.deepEqual(validateProject(config), []);
+  assert.equal(Object.hasOwn(config.project, "uiMode"), false);
+  for (const uiMode of ["adt-preview", "standalone"]) {
+    config.project.uiMode = uiMode;
+    assert.deepEqual(validateProject(config), []);
+  }
+  config.project.uiMode = "automatic";
+  assert.match(validateProject(config).join("\n"), /uiMode/);
+});
+
 test("schema errors stop semantic traversal and identify missing field details", () => {
   assert.ok(validateProject(null).length);
   const config = fresh();

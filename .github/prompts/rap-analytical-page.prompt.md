@@ -1,6 +1,6 @@
 ---
 name: rap-analytical-page
-description: Generate an OData V4 analytical list-report variant with verified RAP aggregation support.
+description: Generate RAP analytical service support and annotations; a standalone analytical frontend is explicitly opt-in.
 agent: agent
 argument-hint: Optional path to a project configuration JSON file
 ---
@@ -11,28 +11,28 @@ Read and follow the complete [generation contract](../../docs/generation-contrac
 
 ## Objective
 
-Generate an OData V4 analytical list page with a chart/table experience using `ui.analytics`. A chart annotation by itself does not make an ordinary RAP service analytical.
+Generate RAP analytical service support and chart/table annotations using `ui.analytics`, with available ADT preview instructions. A chart annotation alone does not make a CRUD service analytical or guarantee a full ALP in ADT preview. Generate the separate analytical frontend only for explicit standalone scope under the contract.
 
 ## Execute
 
-1. Require `ui.analytics` for this template; if omitted, ask only for the missing meaningful dimensions/measures and chart choice. Inspect the SAP release, SAPUI5 version, service metadata, and installed generator. Determine which documented RAP/SADL aggregation approach the target supports. Do not assume a transactional projection can aggregate on every release.
+1. Resolve UI scope; omitted `project.uiMode` means `adt-preview`. Require `ui.analytics`; if omitted, ask only for meaningful dimensions/measures and chart choice. Inspect the SAP release, service metadata, and relevant backend generators. Check target frontend compatibility when needed, but inspect local UI tooling only for standalone scope. Determine the supported RAP/SADL aggregation approach rather than assuming any transactional projection can aggregate.
 2. Reuse existing backend data and generate a separate, read-only analytical projection/service when necessary. Use supported grouping/aggregation exposure. Only use release-specific annotations such as `@OData.applySupportedForAggregation` when supported by the actual target; never add an analytical-query provider contract or `@Analytics.query` and assume it automatically exposes a usable RAP V4 service.
 3. Ensure the real entity-set metadata exposes the `Aggregation.ApplySupported` transformations required by the target SAPUI5 version and the aggregatable/groupable properties. Execute a representative `$apply=groupby(...,aggregate(...))` query when connected. If aggregation is unavailable, state the blocker rather than presenting client-side totals as server analytics.
 4. Implement configured dimensions and measure aggregations. Preserve amount/currency and quantity/unit associations. Include semantic references in groupings and require a single-currency/unit filter or a supported split/series presentation for charts. Do not plot or total a mixture as though it were a single currency/unit.
-5. Generate qualified `UI.Chart`, `UI.LineItem`, and presentation/selection-presentation variants as required. Every manifest annotation path must resolve to an emitted qualifier. Check aggregation support for `AVG`, `MIN`, or `MAX` rather than assuming that supporting `SUM` is enough.
-6. Generate a separate app with ID `project.appId + ".analytics"` in the contract's analytics directory. For OData V4, configure the analytical flavor of `sap.fe.templates.ListReport`; do not use the V2 `sap.suite.ui.generic.template.AnalyticalListPage` component. Derive the chart/table `views` settings from documentation matching the target release.
-7. Enable the requested chart and table switching/drilldown supported by the stack. Do not add visual filters, KPIs, or intent navigation unless their annotations and backend support are actually implemented.
+5. Generate backend-qualified `UI.Chart`, `UI.LineItem`, and presentation/selection-presentation variants as required. Resolve annotation references against exposed metadata. Check `AVG`, `MIN`, or `MAX` support rather than assuming `SUM` implies every aggregation works.
+6. In default scope, deliver analytical backend objects/annotations and actual supported preview instructions; do not scaffold UI files, npm scripts, or a verification harness. Only in standalone scope create `project.appId + ".analytics"` using the V4 analytical flavor of `sap.fe.templates.ListReport`, not the V2 ALP component, with release-matched `views` settings.
+7. Claim chart/table switching or drilldown only when observed in the actual preview or explicitly generated standalone app. Do not add unsupported KPIs, visual filters, or intent navigation.
 8. Keep analytical endpoints read-only. Any drill-through to the transactional app must pass real keys/filter context and preserve authorization.
 
 ## Acceptance checks
 
 - A real `$apply` aggregation query returns expected groups and values when SAP access exists.
-- Chart and table use consistent filters and the configured measure aggregation.
+- Backend queries/annotations preserve the configured filters and measure aggregation; verify chart/table behavior only where an actual preview/frontend supports it.
 - Mixed-currency/unit test data does not produce a misleading combined total.
-- Annotation paths resolve and the generated app uses the correct V4 list-report flavor.
+- Annotation paths resolve. A standalone app, if requested, uses the correct V4 list-report flavor.
 - Empty data, service failures, and authorization restrictions are handled.
-- Run actual UI build checks and available browser checks. Without a connected service, mark aggregation correctness and release compatibility as unverified.
+- In default scope run backend/service checks and available ADT preview, marking frontend build/lint not applicable. Run standalone UI checks only for explicit standalone scope. Without a connected service, mark aggregation correctness and release compatibility unverified.
 
 ## Deliver
 
-Provide the analytical backend additions, separate UI app, representative query and observed results where available, compatibility limitations, and the contract's verification report.
+Provide analytical backend additions/annotations, a representative query and observed results where available, supported preview steps, limitations, and the verification report. Include a separate UI app only for explicit standalone scope.

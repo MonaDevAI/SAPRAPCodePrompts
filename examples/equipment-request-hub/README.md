@@ -1,14 +1,16 @@
 # IT Equipment Request Hub: three Copilot examples
 
-Build one custom RAP business object and three Fiori experiences from the same [configuration](rap-project.json). This folder supplies input, synthetic data, and prompts to run in your own environment, **not pre-generated or SAP-validated applications**.
+Build one custom RAP business object with three RAP-focused scenarios from the same [configuration](rap-project.json). This folder supplies input, synthetic data, and prompts to run in your environment, **not pre-generated or SAP-validated applications**. Standalone frontend generation is optional.
 
 | Run | Example | Intended result |
 | --- | --- | --- |
-| 1 | [List report + object page](01-transactional.md) | Search/filter requests, create/edit drafts, fixed-value helps, and server validation |
-| 2 | [Overview page](02-overview.md) | Recent requests, required dates, estimated cost by equipment, and requested units by office |
-| 3 | [Analytical page](03-analytical.md) | Chart/table analysis by equipment, office, priority, status, and currency |
+| 1 | [List report + object page](01-transactional.md) | RAP objects, UI annotations, draft behavior, validations, and supported ADT preview |
+| 2 | [Overview backend preparation](02-overview.md) | Data/annotations for recent requests, required dates, cost, and unit cards; remaining frontend work documented |
+| 3 | [Analytical service and annotations](03-analytical.md) | Read-only aggregation support, chart/table annotations, queries, and supported preview instructions |
 
-Run them in this order to reuse the backend. Overview chart cards need aggregation support even before the separate analytical UI exists.
+Run them in this order to reuse the backend. Chart-card data needs aggregation support even without a separate UI.
+
+**Omitting `project.uiMode` means `adt-preview`, as in this configuration.** Generate backend objects, annotations, service bindings, inventory, and preview instructions only: no local frontend folders, npm scripts, or UI5 build checks. An actual OVP is a separate frontend and does not appear automatically in ADT preview. Analytical preview capabilities also depend on the target.
 
 ## What the app tracks
 
@@ -39,7 +41,7 @@ For connected generation, follow [ADT MCP setup](../../docs/setup.md), then edit
 - Set a valid `target.transport` request/task for transportable packages; use `null` for `$TMP`.
 - Select the actual ABAP language version; allow Copilot to discover release/UI5 capabilities rather than guessing.
 
-Keep the template General project and the ABAP project in the same Eclipse workspace. The former stores instructions; ADT MCP creates actual ABAP objects in the latter's SAP system/package. Standalone overview/analytical UI builds also need local file/build tooling; ABAP MCP alone does not establish those capabilities.
+Keep the template General project and the ABAP project in the same Eclipse workspace. The former stores instructions; ADT MCP creates actual ABAP objects in the latter's SAP system/package. No standalone frontend tooling is required for the default RAP task.
 
 Start with this read-only preflight:
 
@@ -50,8 +52,9 @@ not the root purchase-order configuration.
 
 Inspect available ABAP MCP tools/generators and the configured target.
 Check project/package/transport access and discover ABAP/SAPUI5 versions.
-Identify support for RAP draft UI services, OVP V4 cards,
-and server-side OData V4 aggregation.
+Identify support for RAP draft UI services, requested service
+annotations, and server-side OData V4 aggregation.
+Use the default RAP/ADT-preview scope, not standalone frontend generation.
 
 Report available capabilities and blockers.
 Do not create/change objects or load data during this preflight.
@@ -71,12 +74,15 @@ examples\equipment-request-hub\rap-project.json.
 
 Read this example's README and its three walkthroughs.
 Generate all three examples in order:
-1. Managed draft RAP backend, list report, and object page.
-2. Separate overview app using the configured cards.
-3. Separate analytical app using the configured dimensions/measures.
+1. Managed draft RAP backend and list/object-page annotations.
+2. Backend data/annotation preparation for the configured overview cards.
+3. Analytical service support and configured chart/table annotations.
 
 Reuse compatible backend objects; do not create three transactional BOs.
 Honor target.mode and preserve currency-separated aggregation.
+Stay in RAP/ADT-preview scope. Do not generate frontend projects
+or run existing standalone UI lint/build scripts.
+Document the frontend work needed for a real OVP or full analytical UI.
 Apply the additional business rules stated in walkthrough 01.
 Do not insert fixtures or create approval/purchasing integrations.
 Run available checks and report exact outcomes for each example.
@@ -87,12 +93,21 @@ Expected output below `generated/equipment-request-hub`:
 | Directory/artifact | Expected identity |
 | --- | --- |
 | `backend/` | Shared RAP sources/object inventory; active table `ZRC_T_EQR` |
-| `app/` | Main app `com.example.equipmentrequests` |
-| `overview/` | OVP app `com.example.equipmentrequests.overview` |
-| `analytics/` | Analytical app `com.example.equipmentrequests.analytics` |
 | `GENERATION-REPORT.md` | Separate outcomes and evidence for each example |
 
 Additional read-only analytical/value-help objects may be required by the target. Inventory them rather than renaming/replacing the transactional service.
+
+## Optional standalone frontends
+
+Only if wanted, set `project.uiMode` to `standalone` or explicitly request standalone frontend generation. That additionally enables these outputs and their real UI build/browser checks:
+
+| Directory | App ID |
+| --- | --- |
+| `app/` | `com.example.equipmentrequests` |
+| `overview/` | `com.example.equipmentrequests.overview` |
+| `analytics/` | `com.example.equipmentrequests.analytics` |
+
+This is separate from connecting to SAP. Existing frontend folders do not opt in and must remain untouched in RAP scope. Their build/lint checks are not applicable, not failed RAP checks.
 
 ## Sample data and reproducible totals
 

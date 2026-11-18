@@ -1,6 +1,6 @@
 ---
 name: rap-overview-page
-description: Generate a card-based Fiori overview page using release-compatible RAP OData services.
+description: Prepare RAP services and annotations for overview cards; generate a standalone OVP frontend only on explicit opt-in.
 agent: agent
 argument-hint: Optional path to a project configuration JSON file
 ---
@@ -11,28 +11,27 @@ Read and follow the complete [generation contract](../../docs/generation-contrac
 
 ## Objective
 
-Generate a real SAP Fiori overview page with the configured `ui.overview.cards`, not an object page decorated to resemble a dashboard.
+By default, prepare RAP data services and annotations for `ui.overview.cards`, documenting the remaining frontend work. An OVP is a separate frontend and does not appear automatically in ADT service preview. Generate the actual OVP app only for explicit standalone scope under the contract; never substitute an object page decorated as a dashboard.
 
 ## Execute
 
-1. Require `ui.overview` for this template; if omitted, ask only which meaningful cards the user needs. Inspect the installed SAPUI5/Fiori tools versions and actual OVP generator/card capabilities. Modern OVP supports OData V2 and V4, but support for individual card types, filters, and navigation depends on the installed version. Do not assume V4 is unsupported, and do not assume every V2 card setting works unchanged with V4.
-2. This library's configuration targets OData V4. Use a RAP V4 UI service and a supported V4 OVP implementation. If the installed stack cannot support a requested card, identify the exact limitation and offer a documented alternative; do not silently downgrade the service to V2 or substitute a different floorplan.
+1. Resolve UI scope; omitted `project.uiMode` means `adt-preview`. Require `ui.overview`; if omitted, ask only which meaningful cards are needed. Inspect backend capabilities and relevant target frontend compatibility where available. Only inspect local OVP generators/build tools for standalone scope. Modern OVP supports V2 and V4, but individual card/filter features depend on the target version.
+2. This library's configuration targets OData V4. Use a RAP V4 UI service; require a supported V4 OVP implementation only for a requested standalone frontend. Identify unsupported backend features and known card compatibility limits without blocking RAP preparation solely on unavailable local frontend tooling. Do not silently downgrade the service to V2 or substitute a different floorplan.
 3. Reuse the transactional backend or generate missing prerequisites using the [business-object template](rap-business-object.prompt.md). For chart cards, also perform the analytical service checks in the [analytical-page template](rap-analytical-page.prompt.md), without generating an extra analytical UI app unless requested.
-4. Scaffold a separate UI app with ID `project.appId + ".overview"` under the contract's overview directory. Use the supported OVP component, `sap.ovp` configuration, model mappings, global filter configuration, i18n, and the card template modules appropriate to the installed version.
+4. In default scope, deliver backend sources, a card-to-entity/annotation mapping, and a list of frontend configuration still required. Do not create an OVP manifest, app folder, npm scripts, or local UI harness. Only in standalone scope scaffold `project.appId + ".overview"` with supported `sap.ovp` settings, models, filters, i18n, and card modules.
 5. For each list card, create the required qualified annotations from its `fields`, `sortBy`, and `sortDescending`. For each chart card, create qualified chart/presentation annotations, verify its measure and aggregation support, and apply the currency/unit rules in the contract.
-6. Configure common filters against the actual global-filter entity. Only propagate filters to cards whose service properties/types map correctly.
-7. Provide card-to-application navigation using a real configured launchpad intent/target when available. If no launchpad target exists, generate explicit setup instructions or a working supported local navigation path; never invent a deployed intent or label a broken link as configured.
+6. Map compatible filter properties against actual service metadata. In standalone scope implement global-filter propagation; in default scope document the mapping without claiming runtime card filtering was tested.
+7. In default scope document navigation requirements only. For a requested standalone app use real configured launchpad/local targets where available; never invent an intent or label an unconfigured link as working.
 8. Do not add data-changing card actions or publish a launchpad tile unless explicitly requested.
 
 ## Acceptance checks
 
-- The manifest represents an OVP, not `sap.fe.templates.ObjectPage`.
-- Every configured card resolves its data model, entity set, template, and annotation qualifiers.
-- Global filters refresh the intended cards; cards load or display meaningful empty/error states.
+- In default scope, backend properties, entity sets, and card annotation qualifiers resolve; remaining frontend configuration is explicitly identified.
+- Only for standalone scope: the manifest represents an OVP, card models/templates resolve, and global filtering/empty/error states work.
 - Chart cards use server-supported aggregation with separate or explicitly filtered currency/unit contexts.
-- Navigation works where a target exists; missing launchpad setup is reported explicitly.
-- Build and browser-check the app when tools and service access permit. Do not claim a dashboard works from a manifest parse alone.
+- For standalone scope, navigation works where a real target exists; missing setup is reported.
+- Run backend service checks in default scope. Build/browser-check a frontend only when explicitly requested. Default-scope frontend checks are not applicable; do not call backend readiness a working dashboard.
 
 ## Deliver
 
-Provide the separate overview UI project, all required backend/annotation changes, the compatibility decision, navigation setup, and the contract's verification report.
+By default provide backend/annotation changes, the compatibility decision, pending frontend requirements, and the contract's verification report. Provide the separate overview UI project/navigation setup only for explicit standalone scope.

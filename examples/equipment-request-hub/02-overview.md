@@ -1,6 +1,6 @@
-# Example 2: overview page
+# Example 2: RAP preparation for an overview page
 
-Reuse the backend from [Example 1](01-transactional.md) and the same [configuration](rap-project.json). The overview is a separate card-based Fiori app, not an extra object-page facet.
+Reuse the backend from [Example 1](01-transactional.md) and the same [configuration](rap-project.json). Default scope prepares RAP data and annotations for cards. A complete overview page is a separate Fiori frontend, not an ADT-preview page or an extra object-page facet.
 
 ## Copilot request
 
@@ -10,25 +10,26 @@ examples\equipment-request-hub\rap-project.json.
 Follow docs\generation-contract.md and the overview-page template.
 
 Reuse the Equipment Request Hub backend from example 01.
-Generate a separate OVP app with the four configured cards:
+Prepare the backend data and qualified annotations for these cards:
 RecentRequests, RequiredDates, CostByEquipment, and UnitsByOffice.
 
-Inspect the installed SAPUI5/Fiori tools capabilities for OData V4
-OVP cards and global filtering. Verify chart-card aggregation support;
+Use RAP/ADT-preview scope, not standalone frontend generation.
+Inspect service capabilities and verify chart-card aggregation support;
 reuse or add a read-only analytical service only when necessary.
-Do not create the separate analytical UI yet.
+Map card fields, entity sets, annotation qualifiers, and compatible filters.
+Do not create UI manifests, frontend folders, npm scripts, or a local harness.
+Do not run existing standalone UI lint/build scripts.
 
-Propagate compatible filters to the cards. For estimated-cost charts,
-require a single currency or a supported split presentation.
-Use CurrencyCode=USD for the first demonstration.
+For cost data, preserve currency-separated aggregation.
+Use CurrencyCode=USD for the first service-query demonstration.
 Keep the raw status codes associated with their configured labels.
 
-Honor target.mode. Preserve the existing transactional app.
-Use app ID com.example.equipmentrequests.overview.
-Do not invent a launchpad intent or silently downgrade to OData V2.
-Report unsupported features rather than substituting a fake dashboard.
+Honor target.mode and preserve existing transactional objects/files.
+Document what a real OVP frontend still requires, including target
+version/card compatibility, filtering, and navigation configuration.
+Do not claim ADT preview renders a full OVP or invent a launchpad intent.
 
-Run available build/service/browser checks and append this
+Run available backend/service checks and append this
 example's results to GENERATION-REPORT.md without erasing example 01.
 ```
 
@@ -43,16 +44,32 @@ example's results to GENERATION-REPORT.md without erasing example 01.
 
 Records with equal sort dates need not appear in a particular relative order. The required-date card includes fulfilled requests unless the user applies a status filter; it is not automatically an overdue/open-work queue.
 
-The output is `generated/equipment-request-hub/overview`, using `sap.ovp` configuration and release-compatible card templates. The cost chart needs analytical backend support even though its UI is an overview card.
+Default output adds sources/mappings under `generated/equipment-request-hub/backend` and evidence to the shared report. The cost-card data needs analytical service support even though its intended UI is an overview card.
 
 ## Show and verify
 
-1. Launch the actual overview app using its generated run instructions; an ADT transactional service preview is not this app.
-2. Filter currency to USD. With the unchanged [fixture](requests.sample.json), compare the equipment cost groups against the [reference table](README.md).
-3. Apply an office filter and verify only compatible cards refresh with the correct data.
-4. Inspect both list cards' labels, ordering, empty states, and service errors.
-5. Demonstrate navigation only when a real local target or configured launchpad intent exists.
+1. Inspect the card-to-entity/annotation mapping against real service metadata.
+2. Query cost groups with currency USD. With the unchanged [fixture](requests.sample.json), compare against the [reference table](README.md).
+3. Verify mapped office filters and configured sort order using service queries.
+4. Record which properties/value-help texts are exposed and any unsupported aggregation.
+5. Mark frontend rendering/filter propagation/navigation checks not applicable in RAP scope.
 
-If the installed release cannot support a card or aggregation, record that blocker separately from any working cards. Do not label the complete overview app passed when one required card is not implemented.
+Do not label backend readiness a working dashboard. If aggregation is unsupported, report that real backend limitation separately from the intentionally omitted frontend.
 
-Continue with [Example 3: analytical page](03-analytical.md).
+## Optional standalone overview frontend
+
+Only when you want the actual OVP app, explicitly request:
+
+```text
+Generate the standalone Equipment Request Hub overview frontend
+using the existing RAP services and the four configured cards.
+This explicitly opts this request into standalone UI scope.
+Use app ID com.example.equipmentrequests.overview under overview/.
+Verify target V4 OVP/card compatibility, implement valid filters
+and real navigation targets, and run available UI checks.
+Preserve backend data/objects and do not generate fake launchpad intents.
+```
+
+Only this opt-in adds OVP manifests, frontend build dependencies, and UI acceptance checks. A successful backend query alone does not prove that frontend works.
+
+Continue with [Example 3: analytical service and annotations](03-analytical.md).

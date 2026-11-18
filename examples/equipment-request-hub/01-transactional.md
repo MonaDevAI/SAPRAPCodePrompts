@@ -13,8 +13,8 @@ list-report, and object-page templates.
 
 Generate the IT Equipment Request Hub:
 - One managed draft-enabled RAP BO with UUID keys and correct ETags.
-- A list report with the configured filters and columns.
-- An object page with Request, Delivery, Cost, and Tracking sections.
+- CDS/UI annotations for list-report filters and columns.
+- Object-page annotations for Request, Delivery, Cost, and Tracking sections.
 - Supported value helps/texts for the configured fixed-value fields.
 - Server-side required-field and allowed-value validations.
 
@@ -26,6 +26,9 @@ expressed by the JSON schema.
 
 Honor target.mode. Reuse compatible objects and discover actual
 MCP/generator schemas before calling tools.
+Use RAP/ADT-preview scope: no standalone frontend projects,
+UI manifests, npm scripts, or local UI verification harnesses.
+Do not run existing generated frontend lint/build scripts.
 Do not create purchasing integrations or an approval workflow.
 Do not insert sample data yet.
 
@@ -39,7 +42,22 @@ Do not claim local source generation activated anything in SAP.
 
 The base technical names are `ZRC_T_EQR`, `ZRC_D_EQR`, `ZRC_R_EQR`, `ZRC_C_EQR`, `ZBP_ZRC_EQR`, `ZRC_UI_EQR`, and `ZRC_UI_EQR_O4`. The service alias is `EquipmentRequests`. Use the shared [naming contract](../../docs/generation-contract.md), and report any target-driven naming adjustments.
 
-The standalone transactional UI lives under `generated/equipment-request-hub/app`. The actual ABAP objects live in the configured SAP package in connected mode. ADT service preview is useful for inspecting the annotated list/object flow, but is not evidence that the standalone UI app was built or deployed.
+Default local output is `generated/equipment-request-hub/backend` and its generation report. Actual ABAP objects live in the configured SAP package in connected mode. Use the supported ADT service preview to inspect the annotated list/object flow. It is not a standalone UI app or proof of deployment.
+
+## Optional standalone transactional frontend
+
+Only when you want a separate frontend, explicitly request:
+
+```text
+Additionally generate the standalone transactional Fiori frontend
+using the existing Equipment Request Hub RAP backend.
+This explicitly opts this request into standalone UI scope.
+Preserve the configured SAP target and existing backend.
+Generate app/ with app ID com.example.equipmentrequests,
+and run its available build/browser checks.
+```
+
+You can instead set `project.uiMode` to `standalone` for generic template invocations. The default request above deliberately stays RAP-only.
 
 ## Optional DEV fixture loading
 

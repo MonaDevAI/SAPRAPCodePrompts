@@ -11,7 +11,7 @@ Read and follow the complete [generation contract](../../docs/generation-contrac
 
 ## Objective
 
-Generate a working managed, draft-enabled RAP backend for the configured entity. This template does not generate a standalone UI5 project unless the user also requests a UI template.
+Generate a working managed, draft-enabled RAP backend for the configured entity. Default to RAP objects, annotations, and ADT preview instructions. A UI template selection alone does not request standalone frontend generation; resolve `project.uiMode` using the contract.
 
 ## Execute
 

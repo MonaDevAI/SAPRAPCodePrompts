@@ -4,9 +4,11 @@
 
 For ABAP generation in Eclipse, use ADT, a tool-capable Copilot client, and a working ADT MCP connection. **Do not install Node.js/npm or restore this repository's `node_modules` just to generate ABAP or use ADT service preview.**
 
+The default UI scope is `project.uiMode: "adt-preview"`, including when the property is omitted. Generate RAP objects, CDS/UI annotations, bindings, and preview instructions only. Do not generate or run standalone frontend/npm projects merely because the user requests a list report, overview, analytical scenario, or all examples.
+
 The Node.js/Ajv configuration checker is optional. When it is unavailable, Copilot must inspect the schema/configuration directly, record that review, mark the automated check as not run, and continue once genuine configuration/SAP prerequisites are satisfied. Missing `ajv` is not an SAP generation error. See the [generation contract](generation-contract.md).
 
-Building a standalone Fiori UI project can require Node.js/npm and that project's dependencies, independently of the optional configuration checker.
+Standalone frontend generation requires an explicit standalone request or `project.uiMode: "standalone"`. Its build can require Node.js/npm and that project's dependencies, independently of the optional configuration checker.
 
 ## Choose how to load the templates
 
@@ -45,7 +47,7 @@ Import this repository using **File > Import > Git > Projects from Git > Clone U
 
 In **Preferences > GitHub Copilot > Custom Instructions**, choose **Referenced projects** to load instructions only for projects referenced in chat, or **All projects** when that is intentional. Reference the selected project configuration, type `/`, and select **sap-rap-development** or the relevant `rap-*` prompt. These are Eclipse chat choices, not terminal commands.
 
-The [Equipment Request Hub showcase](../examples/equipment-request-hub/README.md) supplies a configuration and requests for all three UI examples. Use its configuration path explicitly instead of the root purchase-order configuration.
+The [Equipment Request Hub showcase](../examples/equipment-request-hub/README.md) supplies three RAP-focused examples: transactional preview, overview backend preparation, and analytics service/annotations. Use its configuration path explicitly instead of the root purchase-order configuration. Full overview/analytical UI apps are opt-in, not automatic ADT preview outputs.
 
 ### Older clients or unavailable prompt discovery
 
@@ -59,7 +61,7 @@ Ask Copilot to follow the attached prompt and contract, read any linked prerequi
 
 ## Source-only generation
 
-Leave `target.mode` as `source-only`. No SAP connection is required to draft the source and UI files, although a connected target improves compatibility checks. Review the generated object inventory and follow its ADT import/activation steps.
+Leave `target.mode` as `source-only`. No SAP connection is required to draft ABAP sources and annotations, although a connected target improves compatibility checks. Review the object inventory and follow its ADT import/activation steps. Source-only mode does not enable standalone frontend generation.
 
 An unconnected run must mark SAP activation, real metadata, and service-backed acceptance as unverified. It must not infer the installed ABAP/SAPUI5 release from this repository's defaults.
 
@@ -82,11 +84,13 @@ SAP also documents an ADT MCP server for its VS Code ABAP tooling. Enable it acc
 
 Do not copy an Eclipse server port or tool signature into the VS Code configuration without inspecting the actual installation. The templates intentionally discover generators and schemas instead of hardcoding either variant.
 
-## Fiori UI tooling
+## Optional standalone Fiori UI tooling
 
-Generating a standalone Fiori project requires local file access and normally Node.js, npm, and SAP Fiori tools/UI5 tooling. The installed SAPUI5 version must support the requested floorplan and service features.
+Only for explicit standalone scope, generating/building a separate Fiori project requires local file access and normally Node.js, npm, and SAP Fiori tools/UI5 tooling. The installed SAPUI5 version must support the requested floorplan and service features. Do not require these tools or run existing frontend lint/build scripts for RAP-only development.
 
 For live preview, configure the generated project's real service connection/proxy using your organization's supported authentication and destination mechanism. Never embed SAP passwords or MCP tokens in a UI manifest. Launchpad publication and intent configuration are separate from generating a local app.
+
+An OVP is a separate frontend, not a page automatically available in ADT service preview. Default overview generation prepares service data/annotations and documents remaining frontend work. Analytical preview features likewise depend on the target; a working aggregation query is not proof of a complete analytical UI.
 
 ## Using the library in an existing repository
 
