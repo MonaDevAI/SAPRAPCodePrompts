@@ -11,7 +11,8 @@ Use this skill when the user requests ABAP RAP application generation with this 
 2. Select and read the complete template below. Treat its frontmatter as editor metadata and execute its Markdown instructions.
 3. For an unspecified "RAP application", use the list report and object page templates together, creating the backend once. For an explicitly requested floorplan, generate only that floorplan and its missing prerequisites.
 4. Honor `target.mode`. Source-only generates local files; connected mode uses only the authenticated, scoped tools actually available.
-5. Continue through the template's acceptance checks. Return actual file/object locations, checks run, blockers, and remaining manual steps.
+5. Treat Node.js/npm/Ajv as optional configuration-check tooling, not ABAP generation prerequisites. If unavailable, inspect inputs directly using the contract, report the automated check as not run, and continue once genuine input/SAP requirements are satisfied. Do not demand or perform dependency installation solely for ABAP generation.
+6. Continue through the template's acceptance checks. Return actual file/object locations, checks run, blockers, and remaining manual steps.
 
 | User request | Template |
 | --- | --- |

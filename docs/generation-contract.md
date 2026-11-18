@@ -6,7 +6,13 @@ Every generation template must follow this contract. The user's explicit request
 
 Read the complete selected prompt, this contract, and the requested project JSON. Default to [rap-project.json](../rap-project.json). The [schema](../rap-project.schema.json) and [validator](../scripts/validate.mjs) define the supported input format.
 
-If Node.js and the repository dependencies are available, run `npm run check -- --config <configuration-path>` from the repository root. Otherwise inspect the same constraints directly and report that the automated input check was not run. Do not silently skip unresolved input errors.
+**ABAP source generation, connected ABAP development through Eclipse ADT MCP, and ADT service preview do not require this repository's Node.js/npm/Ajv tools or `node_modules`.** The local validator is an optional convenience, not a generation prerequisite.
+
+If Node.js, npm, and the repository dependencies are already available, run `npm run check -- --config <configuration-path>` from the repository root. Otherwise inspect the JSON schema and the constraints below directly, record the manual review, and mark the automated check **not run: optional validation tooling unavailable**. Continue with generation once genuine configuration/SAP prerequisites are satisfied.
+
+If a checker attempt reports a missing runtime or dependency, such as `ERR_MODULE_NOT_FOUND` for `ajv`, apply the same manual-review path instead of stopping ABAP generation. Do not require or perform `npm install`/`npm ci` solely for ABAP generation; restore this validator's dependencies only when the user requests its automated checks or when maintaining the prompt library.
+
+Distinguish unavailable tooling from invalid inputs or an unexpected checker failure. Never mark an unrun automated check as passed, suppress diagnostics, or bypass unresolved configuration/SAP errors. If an unexpected failure leaves a constraint uncertain, resolve that uncertainty before the affected generation.
 
 - Use the fields and UI selections already supplied; ask only for essential missing requirements.
 - Reject duplicate ABAP names, reserved technical fields, invalid identifiers, missing references, incompatible defaults, and contradictory required/read-only fields.
@@ -110,7 +116,7 @@ After generation, run the smallest meaningful checks the environment supports:
 5. UI dependency restore, build/lint using the generated project's scripts, and a local preview.
 6. Browser acceptance for the chosen floorplan when a browser tool and service access are available.
 
-Restore dependencies only when required by generated manifest changes or a missing-dependency failure. Resolve errors introduced by generation and rerun affected checks. Do not "fix" unrelated systems or suppress errors.
+For a requested standalone Fiori UI build, restore that generated project's dependencies only when required by manifest changes or a missing-dependency failure. These UI build dependencies are separate from the optional repository validator. If UI build tooling is unavailable, report the affected UI build as blocked/not run without treating it as an ABAP backend-generation dependency. Resolve errors introduced by generation and rerun affected checks. Do not "fix" unrelated systems or suppress errors.
 
 Use authorized test data only. Do not run write tests in production or switch to another SAP environment without authorization. Stop temporary preview servers after self-contained checks unless the user asked to keep them available.
 

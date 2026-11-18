@@ -6,6 +6,8 @@ Reusable Markdown prompts for ABAP RAP business objects and SAP Fiori elements a
 
 This is a prompt library, not a generator executable or an SAP product. Markdown provides instructions to Copilot; the available tools, SAP release, and permissions determine what it can actually generate, activate, and test.
 
+**No npm setup is required to generate ABAP through Eclipse ADT MCP.** Node.js/npm/Ajv are optional tools for this repository's automated configuration checks. Without them, Copilot must inspect the inputs directly, report that the automated check was not run, and continue once actual configuration/SAP requirements are satisfied.
+
 ## Choose a template
 
 | Template | What Copilot builds |
@@ -109,9 +111,9 @@ Every prompt follows the same [generation contract](docs/generation-contract.md)
 
 Repository checks validate configuration, references, prompt structure, and validation logic. **They do not prove that generated ABAP activates or that a Fiori application runs.** No SAP-system generation or browser acceptance run is included in this repository's initial verification.
 
-## Check the template repository
+## Optional template-repository checks
 
-Node.js 22 or later is needed only for these checks, not for reading the prompts:
+This section is for maintainers and users who choose automated input validation; it is **not** an initial setup requirement for ABAP generation. Node.js 22 or later is needed only for these checks:
 
 ```powershell
 npm ci --ignore-scripts
@@ -132,6 +134,8 @@ npm run check -- --config .\examples\equipment-request-hub\rap-project.json --fi
 ```
 
 Fixture checks cover the configured types, required values, defaults, and allowed-value membership; generated RAP business-rule tests and live-service checks remain separate.
+
+If the checker reports a missing `ajv` package, either restore dependencies using the optional command above or let Copilot perform the documented manual review. A missing validator does not prevent SAP-side generation/activation checks through ADT MCP. Invalid configuration and actual SAP errors must still be resolved. Building a separately generated Fiori UI project may need its own Node/npm tooling; that is a different requirement.
 
 Do not commit passwords, MCP tokens, destinations containing credentials, or authenticated browser state. Keep local MCP connection settings in your client's secure configuration.
 

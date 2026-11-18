@@ -1,5 +1,13 @@
 # Copilot and SAP setup
 
+## Required versus optional tooling
+
+For ABAP generation in Eclipse, use ADT, a tool-capable Copilot client, and a working ADT MCP connection. **Do not install Node.js/npm or restore this repository's `node_modules` just to generate ABAP or use ADT service preview.**
+
+The Node.js/Ajv configuration checker is optional. When it is unavailable, Copilot must inspect the schema/configuration directly, record that review, mark the automated check as not run, and continue once genuine configuration/SAP prerequisites are satisfied. Missing `ajv` is not an SAP generation error. See the [generation contract](generation-contract.md).
+
+Building a standalone Fiori UI project can require Node.js/npm and that project's dependencies, independently of the optional configuration checker.
+
 ## Choose how to load the templates
 
 ### Skills-capable Copilot clients
@@ -88,6 +96,6 @@ For an existing SAP backend/package, you can still work from this clone: set its
 
 To keep prompts inside an existing local code repository instead, copy the five prompt files, the complete skill folder, `docs`, the configuration, and its schema while preserving relative paths. Merge repository instructions rather than overwriting existing ones.
 
-The optional automated checker additionally needs `scripts/validate.mjs` and the Ajv development dependency. Do not overwrite another application's `package.json`; integrate that check into its existing tooling if needed. The prompts can still inspect the configuration directly when the automated checker is unavailable.
+If you choose to use the optional automated checker, it additionally needs `scripts/validate.mjs` and the Ajv development dependency. Do not overwrite another application's `package.json`; integrate that check into its existing tooling if needed. The prompts must inspect the configuration directly when the automated checker is unavailable, without requiring npm setup solely for ABAP generation.
 
 See [official references](references.md) for all setup sources.

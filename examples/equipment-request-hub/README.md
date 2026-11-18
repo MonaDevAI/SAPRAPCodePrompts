@@ -115,15 +115,18 @@ Currency subtotals are USD 15950.00 / 45 units and EUR 2170.00 / 8 units. Never 
 
 For authorized DEV data loading, use the separate request in [walkthrough 01](01-transactional.md). It requires supported transactional APIs/EML and must not silently overwrite existing records or directly insert into RAP-managed tables.
 
-## Validate inputs locally
+## Optional automated input checks
 
-From the repository root, after restoring repository dependencies:
+**Skip npm setup if your goal is ABAP generation through Eclipse ADT MCP.** Copilot must inspect this configuration directly when the optional checker is unavailable, report the automated check as not run, and proceed once actual configuration/SAP requirements are satisfied.
+
+If you choose automated input checks, run these from the repository root with Node.js 22+ installed. The first command restores only the local check tooling:
 
 ```powershell
+npm ci --ignore-scripts
 npm run check -- --config .\examples\equipment-request-hub\rap-project.json --fixtures .\examples\equipment-request-hub\requests.sample.json
 npm test
 ```
 
-The fixture checker validates configured types, required values, defaults, and allowed-value membership. It does not execute RAP validations, check SAP currency customizing, or prove that the target supports the floorplans.
+The fixture checker validates configured types, required values, defaults, and allowed-value membership. A missing `ajv` package must not be presented as a blocker to ABAP generation. The checker does not execute RAP validations, check SAP currency customizing, or prove that the target supports the floorplans. Standalone UI builds may need separate frontend tooling.
 
 For the recording/blog, show the selected skill, configuration, real tool calls, generated inventory, and **observed** checks. Only show running UI screenshots after actually launching and verifying that UI.
