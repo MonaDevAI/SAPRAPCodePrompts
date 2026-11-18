@@ -50,21 +50,6 @@ The base technical names are `ZRC_T_EQR`, `ZRC_D_EQR`, `ZRC_R_EQR`, `ZRC_C_EQR`,
 
 The requested output is actual ABAP objects in the confirmed SAP project/package, with verified activation state. Supplementary sources/inventory and the evidence report live under `generated/equipment-request-hub`. Local copies alone do not complete this request. Use supported ADT service preview to inspect the annotated list/object flow; it is not a standalone UI app or proof of deployment.
 
-## Optional standalone transactional frontend
-
-Only when you want a separate frontend, explicitly request:
-
-```text
-Additionally generate the standalone transactional Fiori frontend
-using the existing Equipment Request Hub RAP backend.
-This explicitly opts this request into standalone UI scope.
-Preserve the configured SAP target and existing backend.
-Generate app/ with app ID com.example.equipmentrequests,
-and run its available build/browser checks.
-```
-
-You can instead set `project.uiMode` to `standalone` for generic template invocations. The default request above deliberately stays RAP-only.
-
 ## Optional DEV fixture loading
 
 For local mocks, use [requests.sample.json](requests.sample.json) without modifying SAP. To load it into an authorized DEV target, send the following **separate** request only after reviewing the target and generated behavior:

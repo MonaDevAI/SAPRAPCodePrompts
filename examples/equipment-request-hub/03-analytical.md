@@ -72,18 +72,4 @@ Order is not significant. Compare decimal values numerically, not by JSON string
 
 If aggregation or requested preview features cannot run, retain useful source output and mark the affected checks **blocked** or **not run**. A full frontend intentionally omitted from RAP scope is not a failed backend build.
 
-## Optional standalone analytical frontend
-
-Only when you want the separate analytical UI, explicitly request:
-
-```text
-Generate the standalone Equipment Request Hub analytical frontend
-using the existing analytical RAP service and annotations.
-This explicitly opts this request into standalone UI scope.
-Use app ID com.example.equipmentrequests.analytics under analytics/.
-Use the OData V4 analytical flavor of sap.fe.templates.ListReport,
-not the V2 ALP component. Preserve currency context.
-Run available UI build/browser checks and report exact outcomes.
-```
-
-Finish with separate outcomes for transactional preview, overview backend preparation, analytics service/annotations, and any explicitly requested standalone apps.
+Finish with separate outcomes for transactional preview, overview backend preparation, and analytics service/annotations. Do not generate a frontend application.

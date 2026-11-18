@@ -10,19 +10,14 @@
     "project": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["appId", "title", "entity", "entitySet", "shortName", "namespacePrefix", "outputDirectory"],
+      "required": ["title", "entity", "entitySet", "shortName", "namespacePrefix", "outputDirectory"],
       "properties": {
-        "appId": { "type": "string", "pattern": "^[a-z][a-z0-9]*(\\.[a-z][a-z0-9]*)+$" },
+        "appId": { "type": "string", "pattern": "^[a-z][a-z0-9]*(\\.[a-z][a-z0-9]*)+$", "description": "Optional project identifier retained for existing configurations; does not enable frontend generation." },
         "title": { "$ref": "#/definitions/label" },
         "entity": { "type": "string", "pattern": "^[A-Za-z][A-Za-z0-9]{0,29}$" },
         "entitySet": { "$ref": "#/definitions/identifier" },
         "shortName": { "type": "string", "pattern": "^[A-Z][A-Z0-9]{0,7}$" },
         "namespacePrefix": { "type": "string", "pattern": "^[ZY][A-Z0-9]{0,4}$" },
-        "uiMode": {
-          "enum": ["adt-preview", "standalone"],
-          "default": "adt-preview",
-          "description": "Default to RAP objects, UI annotations, and ADT preview instructions. Generate standalone frontend projects only when explicitly selected."
-        },
         "outputDirectory": { "type": "string", "minLength": 1 }
       }
     },

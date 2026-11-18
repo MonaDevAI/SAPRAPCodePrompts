@@ -2,7 +2,7 @@
 
 **Connect ABAP MCP. Ask GitHub Copilot to create and activate your RAP application in SAP.**
 
-Reusable Markdown prompts for connected ABAP RAP development. Describe your business entity in one JSON file, choose a prompt, and let Copilot use ABAP/ADT MCP to create RAP objects, CDS/UI annotations, and service bindings in your SAP development target, activate them, and verify supported ADT preview. Standalone Fiori frontend generation is opt-in.
+Reusable Markdown prompts for connected ABAP RAP development. Describe your business entity in one JSON file, choose a prompt, and let Copilot use ABAP/ADT MCP to create RAP objects, CDS/UI annotations, and service bindings in your SAP development target, activate them, and verify supported ADT preview. Frontend project generation is not supported.
 
 This is a prompt library, not a generator executable or an SAP product. Markdown provides instructions to Copilot; the available tools, SAP release, and permissions determine what it can actually generate, activate, and test.
 
@@ -20,7 +20,7 @@ This is a prompt library, not a generator executable or an SAP product. Markdown
 
 UI prompts reuse an existing compatible RAP backend or create the required backend first. Running multiple prompts for the same configuration must reuse objects, not create duplicate business objects.
 
-**Default scope is RAP development, not local UI scaffolding.** An omitted `project.uiMode` means `adt-preview`: no generated frontend folders, UI manifests, npm scripts, UI5 build tools, or frontend lint/build checks. ADT preview does not automatically render an overview page or every analytical feature. Set `project.uiMode` to `standalone`, or explicitly request a standalone frontend, only when that is wanted. See [UI scope](docs/generation-contract.md).
+**Scope is RAP backend development and ADT preview only.** No frontend folders, UI manifests, npm scripts, UI5 build configuration, or frontend lint/build checks are generated or run. ADT preview does not automatically render an overview page or every analytical feature. Full frontend applications belong in a separate project, outside this library's [generation contract](docs/generation-contract.md).
 
 ## Three-example showcase
 
@@ -30,7 +30,7 @@ The [IT Equipment Request Hub](examples/equipment-request-hub/README.md) include
 2. [Overview backend preparation](examples/equipment-request-hub/02-overview.md).
 3. [Analytical service and annotations](examples/equipment-request-hub/03-analytical.md).
 
-The examples reuse one RAP business object and need no real supplier/material masters. They include copyable Copilot requests and expected fixture totals, not pre-generated or SAP-validated applications. Their default requests stay within RAP scope; complete standalone frontends are optional. Use the showcase configuration path explicitly; the root configuration remains the purchase-order example.
+The examples reuse one RAP business object and need no real supplier/material masters. They include copyable Copilot requests and expected fixture totals, not pre-generated or SAP-validated applications. All requests stay within RAP scope; frontend applications are not generated. Use the showcase configuration path explicitly; the root configuration remains the purchase-order example.
 
 ## Quick start
 
@@ -65,7 +65,7 @@ The examples reuse one RAP business object and need no real supplier/material ma
    Resolve missing target details before writes. Do not generate a standalone UI.
    ```
 
-4. Inspect the actual SAP repository objects in your ADT project/package and their activation diagnostics. Review the inventory/evidence in `generated/purchase-orders/GENERATION-REPORT.md`; local source copies are supplementary. Missing MCP access or creation/activation capability must be reported as a blocker, not replaced by a local-files success claim. Default `adt-preview` UI scope does not create local frontend projects or mean source-only development.
+4. Inspect the actual SAP repository objects in your ADT project/package and their activation diagnostics. Review the inventory/evidence in `generated/purchase-orders/GENERATION-REPORT.md`; local source copies are supplementary. Missing MCP access or creation/activation capability must be reported as a blocker, not replaced by a local-files success claim. ADT preview does not require a local frontend project or mean source-only development.
 
 **VS Code Local sessions:** clients supporting prompt files also expose `/rap-business-object`, `/rap-list-report`, `/rap-object-page`, `/rap-overview-page`, and `/rap-analytical-page`. Current VS Code documentation restricts prompt-file execution to its Local harness and recommends skills for newer Copilot harness sessions. Use the included [skill](.github/skills/sap-rap-development/SKILL.md) or the attachment workflow rather than assuming these commands exist in every editor.
 
@@ -79,13 +79,14 @@ The default example uses a custom demo entity, not SAP's standard purchase-order
 | --- | --- |
 | `project.entity`, `entitySet`, `shortName` | Business names and a short technical object stem |
 | `project.namespacePrefix` | Customer-object prefix, initially `ZRC` |
-| `project.uiMode` | Optional: `adt-preview` when omitted; `standalone` explicitly opts into frontend projects |
 | `businessObject.fields` | Your business fields; technical UUID/audit/draft fields are generated separately |
 | `ui` | List columns, filters, object-page groups, overview cards, and analytical measures |
 | `target.mode` | `source-only` or `connected` |
 | `target.adtProject`, `package`, `transport` | Required SAP target details for connected work |
 
 Field types are `string`, `date`, `integer`, `boolean`, `decimal`, `amount`, `currency`, `quantity`, and `unit`. Amounts reference a currency field; quantities reference a unit field. For a non-analytical application, omit `ui.analytics` and any overview chart cards; `ui.overview` is optional too. The [JSON schema](rap-project.schema.json) supplies editor validation. The [worked example](examples/purchase-order.md) explains the inputs and expected results.
+
+The former `project.uiMode` option has been removed and is rejected by validation; omit it from configurations. Existing `project.appId` values remain accepted as optional project identifiers, not frontend settings. Existing generated frontend files are left untouched.
 
 ### Connected target details
 
@@ -117,21 +118,15 @@ The prompts discover actual MCP tools/generators, create or update real objects,
 
 For offline ABAP source drafts, explicitly request source-only generation or use the saved sample `target.mode: "source-only"` without a connected override. This produces local sources/import steps and cannot satisfy connected creation or prove activation. It is an alternative to the primary MCP workflow, not a fallback silently chosen when MCP fails.
 
-### Optional standalone Fiori frontends
-
-Only if you want separately generated UI projects, add `"uiMode": "standalone"` to the existing `project` object or explicitly request a standalone frontend. This is independent of `target.mode`: connecting to SAP does not opt into frontend generation. Standalone apps can require their own local build tools/dependencies; ADT service preview does not.
-
-Existing generated frontend folders are not an opt-in and are left untouched in the default RAP workflow. Their lint/build checks are not applicable to that workflow.
-
 ## Generation and verification
 
 Every prompt follows the same [generation contract](docs/generation-contract.md): validate inputs, inspect capabilities and existing objects, generate in dependency order, run available checks, and report exact outcomes.
 
 - New transactional backends use managed RAP, UUID keys, and draft support.
-- Standard Fiori elements and annotations are preferred over custom controllers.
-- Overview backend readiness and analytical aggregation are checked against the installed release; actual card UI checks require a requested standalone frontend.
+- CDS/UI annotations support the target's standard Fiori elements ADT preview; no local controllers are generated.
+- Overview backend readiness and analytical aggregation are checked against the installed release; backend readiness is not a working dashboard claim.
 - Currency/unit boundaries are preserved; mixed currencies must not be added into one unqualified total.
-- Connected RAP checks include activation, applicable ATC/ABAP Unit checks, real service metadata, and supported ADT preview. Standalone UI scripts are run only for explicitly requested frontend projects.
+- Connected RAP checks include activation, applicable ATC/ABAP Unit checks, real service metadata, and supported ADT preview. Frontend build/lint checks are outside scope.
 
 Repository checks validate configuration, references, prompt structure, and validation logic. **They do not prove that generated ABAP activates or that a Fiori application runs.** No SAP-system generation or browser acceptance run is included in this repository's initial verification.
 
@@ -159,7 +154,7 @@ npm run check -- --config .\examples\equipment-request-hub\rap-project.json --fi
 
 Fixture checks cover the configured types, required values, defaults, and allowed-value membership; generated RAP business-rule tests and live-service checks remain separate.
 
-If the checker reports a missing `ajv` package, either restore dependencies using the optional command above or let Copilot perform the documented manual review. A missing validator does not prevent SAP-side generation/activation checks through ADT MCP. Invalid configuration and actual SAP errors must still be resolved. Building a separately generated Fiori UI project may need its own Node/npm tooling; that is a different requirement.
+If the checker reports a missing `ajv` package, either restore dependencies using the optional command above or let Copilot perform the documented manual review. A missing validator does not prevent SAP-side generation/activation checks through ADT MCP. Invalid configuration and actual SAP errors must still be resolved.
 
 Do not commit passwords, MCP tokens, destinations containing credentials, or authenticated browser state. Keep local MCP connection settings in your client's secure configuration.
 
@@ -170,7 +165,7 @@ Do not commit passwords, MCP tokens, destinations containing credentials, or aut
 - `docs`: shared generation rules, editor setup, and official references.
 - `rap-project.json`: the single editable configuration and purchase-order example.
 - `rap-project.schema.json`: the configuration contract.
-- `examples/equipment-request-hub`: three RAP showcase walkthroughs, shared configuration, fixtures, and optional frontend steps.
+- `examples/equipment-request-hub`: three RAP showcase walkthroughs, shared configuration, and fixtures.
 - `scripts` and `tests`: repository/configuration checks and focused regression tests.
 
 See [official references](docs/references.md) for SAP RAP, ADT MCP, Fiori elements, and Copilot documentation. MIT licensed; not affiliated with or endorsed by SAP or GitHub.

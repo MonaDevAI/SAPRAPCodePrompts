@@ -36,22 +36,19 @@ The primary walkthroughs request actual SAP-side development through ABAP/ADT MC
 - Read-only discovery/preflight never authorizes object creation, activation, publication, or data loading. Merely mentioning MCP does not authorize writes. Do not execute generation just because the repository is opened.
 - An unavailable connection or required write capability is a **connected-development blocker**, not permission to silently substitute local files. Keep any useful source drafts clearly labeled as partial work.
 
-### UI scope: RAP first
+### Scope: RAP backend and ADT preview only
 
-Resolve `project.uiMode` independently of `target.mode`. When omitted, it means **`adt-preview`**. Both bundled configurations omit it intentionally and therefore use this RAP-first default.
+This library generates RAP backend objects, CDS/UI annotations, service definitions/bindings, the object inventory, and ADT service-preview support. **Frontend generation is not supported.** There is no frontend mode or opt-in branch. The removed `project.uiMode` property is invalid; report it as an unsupported setting rather than enabling a frontend or silently discarding it. An optional legacy `project.appId` may remain as a project identifier but does not affect generation.
 
-- **`adt-preview` (default):** generate RAP backend objects, CDS/UI annotations, service definitions/bindings, the object inventory, and ADT service-preview instructions. Do not generate standalone `app/`, `overview/`, or `analytics/` projects, UI manifests/components, a generated root `package.json`, npm scripts, UI5 build configuration, or local JavaScript verification harnesses merely to complete RAP development. Do not invoke existing generated frontend lint/build scripts.
-- **`standalone` (opt-in):** additionally generate the complete requested Fiori frontend projects. Select this only when the configuration explicitly sets it or the user explicitly requests standalone frontend generation. Record the resolved choice; do not silently rewrite the user's configuration.
+Do not generate `app/`, `overview/`, or `analytics/` frontend projects, UI manifests/components, a generated root `package.json`, npm scripts, UI5 build configuration, or local JavaScript verification harnesses. Do not build, lint, install dependencies in, modify, or remove existing frontend projects.
 
-Mentioning a list report, object page, overview, analytical page, or "all three examples" does not by itself opt into standalone frontend generation. Existing frontend folders also do not imply consent to build, install dependencies, modify, or remove them.
+List report/object page requests mean RAP behavior and annotations for supported preview. Overview and analytical requests mean the corresponding RAP-facing data/services/annotations. If a request needs a full frontend application, explain that it belongs in a separate frontend project outside this library's generation workflow.
 
-Optional standalone sections in walkthroughs describe a branch, not permission to execute it. Do not execute both branches when asked to follow a walkthrough. An explicit RAP-only user request takes precedence over a configured standalone scope; record the resolved scope without editing the configuration.
-
-ADT service preview is not a deployed app or a universal floorplan host. Transactional list/object annotations can be inspected there when supported. An overview page is a separate frontend: default scope prepares its RAP-facing data/annotations and documents remaining frontend work, but must not claim to render an OVP in ADT. For analytics, validate service aggregation and annotations; only claim chart/ALP preview features actually observed on the target.
+ADT service preview is not a deployed app or a universal floorplan host. Transactional list/object annotations can be inspected there when supported. An overview page is a separate frontend: this library prepares its RAP-facing data/annotations and documents requirements for that separate project, but must not claim to render an OVP in ADT. For analytics, validate service aggregation and annotations; only claim chart/ALP preview features actually observed on the target.
 
 ### Source-only
 
-Generate local ABAP source files, annotations, and preview/import instructions under `project.outputDirectory`. Generate frontend projects only for the explicit standalone scope above. Do not modify an SAP system or publish a service.
+Generate local ABAP source files, annotations, and preview/import instructions under `project.outputDirectory`. Do not generate frontend projects, modify an SAP system, or publish a service.
 
 If read-only SAP discovery is available and authorized, use it to improve compatibility. Otherwise identify release-dependent assumptions. Source generation is useful without a connection, but cannot prove activation, metadata correctness, aggregation support, or UI integration.
 
@@ -61,7 +58,7 @@ Represent ABAP sources with clearly identified object types and ADT source filen
 
 Require a real ADT project/destination, accessible customer package, and a valid workbench request/task for transportable packages. `$TMP` must not use a transport. Confirm package/language-version compatibility through SAP discovery; a local configuration string is not proof of system access.
 
-Discover the tools and their input schemas from the connected MCP server before invoking them. Eclipse-hosted ADT MCP, VS Code ADT MCP, and third-party servers may expose different capabilities and names. Inspect available generators and prefer supported official RAP/Fiori generators where suitable.
+Discover the tools and their input schemas from the connected MCP server before invoking them. Eclipse-hosted ADT MCP, VS Code ADT MCP, and third-party servers may expose different capabilities and names. Inspect available generators and prefer supported official RAP generators where suitable.
 
 Use only the configured or explicitly confirmed project/package and user-authorized work. If target details are blank, discover permitted candidates and ask only for unresolved selections; do not silently choose another system, package, or transport. Honor client permissions and project/package access restrictions. Do not broaden them, create transports/packages, release transports, deploy to a launchpad, or change another environment just to bypass a blocker.
 
@@ -75,7 +72,7 @@ If a needed tool is unavailable, attempt another supported path within scope. Wh
 
 ## 3. Discover before generating
 
-Read repository instructions and relevant existing sources. Inspect target ABAP release/language version, released APIs/types, generators, service definitions/bindings, and authorization conventions. Discover the installed frontend version when needed to verify preview/annotation compatibility; missing local Fiori build tools are not an ABAP-generation blocker. Inspect local UI generators/tooling only for explicit standalone scope.
+Read repository instructions and relevant existing sources. Inspect target ABAP release/language version, released APIs/types, generators, service definitions/bindings, and authorization conventions. Discover the installed SAPUI5 version when needed to verify preview/annotation compatibility. Do not inspect or require local Fiori scaffolding/build tools for RAP development.
 
 Find artifacts by configured names and inspect their contents. An existing name alone does not establish a compatible backend. Reuse an existing compatible BO/service; do not repeatedly create one when the user runs several UI prompts.
 
@@ -111,23 +108,13 @@ The service exposes `project.entitySet` as its public alias. Technical object na
 
 Generate/activate in the target's valid dependency order: persistence and prerequisites, view entities, behavior definitions/implementations, projections and projection behavior, metadata/authorization, service definition, and service binding. Some generators create interdependent objects as a group; respect their supported activation flow.
 
-## 5. Deliver RAP preview or opt-in standalone applications
+## 5. Deliver RAP objects and ADT preview
 
-In default UI scope, use backend CDS metadata extensions and supported service annotations, not local UI files. In connected execution, deliver real SAP objects with verified activation state; local source copies/inventory under `backend/` are supplementary. In source-only execution, deliver the ABAP source inventory there without claiming SAP writes. Write `GENERATION-REPORT.md` under `project.outputDirectory` with exact binding/publication/preview steps and operations actually performed.
+Use backend CDS metadata extensions and supported service annotations, not local UI files. In connected execution, deliver real SAP objects with verified activation state; local source copies/inventory under `backend/` are supplementary. In source-only execution, deliver the ABAP source inventory there without claiming SAP writes. Write `GENERATION-REPORT.md` under `project.outputDirectory` with exact binding/publication/preview steps and operations actually performed.
 
-Only in explicit standalone scope, use annotations and standard floorplans before adding extensions. Prefer the installed SAP Fiori tools scaffolder. If unavailable, produce an equivalent complete project with component, manifest, bootstrap/launch setup, i18n, UI5 tooling, package scripts, and documented service connection.
+Preserve any previously generated frontend files and mark their build/lint checks **not applicable: frontend generation is outside this RAP project**. Do not repair or run their scripts as part of RAP validation.
 
-| Opt-in standalone app | App ID | Output below `project.outputDirectory` |
-| --- | --- | --- |
-| List report + object page | `project.appId` | `app/` |
-| Overview page | `project.appId + ".overview"` | `overview/` |
-| Analytical page | `project.appId + ".analytics"` | `analytics/` |
-
-When updating an explicitly requested standalone floorplan, update its existing app without duplicating/overwriting another floorplan. In default scope, leave previously generated frontend files untouched and mark their build/lint checks **not applicable: standalone frontend not requested**.
-
-For standalone frontends, use `sap.fe.templates.ListReport` and `sap.fe.templates.ObjectPage` for the V4 transactional flow. The V4 analytical page is the analytical flavor of the list report, not the V2 ALP component. The overview page is a distinct OVP application; determine V4 card/filter compatibility from the installed version.
-
-Never hardcode a made-up backend URL, launchpad intent, destination, or annotation qualifier as if it were verified. If an endpoint is unavailable in source-only mode, isolate the unresolved setting and provide exact configuration steps. Mocks are useful but must be labeled as mocks.
+Never hardcode a made-up backend URL, launchpad intent, destination, or annotation qualifier as if it were verified. If an endpoint is unavailable in source-only mode, identify the unresolved setting and provide exact configuration steps. Mocks are useful but must be labeled as mocks.
 
 ## 6. Preserve analytical meaning
 
@@ -141,14 +128,13 @@ Discover supported annotations and aggregation transformations for the actual re
 
 After generation, run the smallest meaningful checks the environment supports:
 
-1. Configuration validation and source/annotation/reference checks; manifest checks only for explicit standalone scope.
+1. Configuration validation and ABAP source/annotation/reference checks.
 2. SAP activation and relevant diagnostics when connected.
 3. Applicable ATC and focused ABAP Unit tests; add tests only for new nontrivial behavior.
 4. Real service `$metadata`, capabilities, and required analytical queries when available.
 5. ADT service preview and authorized browser acceptance when available; do not substitute a standalone npm build for RAP activation.
-6. Only for explicit standalone scope: UI dependency restore, project build/lint, and browser acceptance for the requested frontend.
 
-For a requested standalone Fiori UI build, restore that generated project's dependencies only when required by manifest changes or a missing-dependency failure. These UI build dependencies are separate from the optional repository validator. If UI build tooling is unavailable, report the affected UI build as blocked/not run without treating it as an ABAP backend-generation dependency. Resolve errors introduced by generation and rerun affected checks. Do not "fix" unrelated systems or suppress errors.
+Resolve errors introduced in RAP generation and rerun affected checks. Do not run frontend build/lint scripts or restore frontend dependencies; these are outside this project's scope. Do not "fix" unrelated systems or suppress errors.
 
 Use authorized test data only. Do not run write tests in production or switch to another SAP environment without authorization. Stop temporary preview servers after self-contained checks unless the user asked to keep them available.
 
@@ -156,11 +142,11 @@ Use authorized test data only. Do not run write tests in production or switch to
 
 Write `GENERATION-REPORT.md` under the configured output, containing:
 
-- Configuration path, requested template(s), saved and effective execution mode with any explicit user override, resolved UI scope (including the default when omitted), and observed release/tool versions.
+- Configuration path, requested template(s), saved and effective execution mode with any explicit user override, RAP/ADT-preview scope, and observed release/tool versions.
 - Files and SAP objects created/updated, their types, actual target project/package/transport, real object identifiers or ADT links where available, and read-back activation state.
 - Actual MCP operations/results establishing SAP-side creation/update and activation. List partial/inactive objects and unavailable operations explicitly; never substitute a list of planned objects or local files as evidence.
-- Real service URL/binding where known and import/activation/ADT-preview steps. Include app IDs/startup steps only for requested standalone apps.
+- Real service URL/binding where known and import/activation/ADT-preview steps.
 - A verification table with each check marked **passed**, **failed**, **blocked**, **not run**, or **not applicable**, including the exact command/tool where applicable, observed result, and reason for missing or out-of-scope checks.
-- Outstanding placeholders/manual steps, authorization gaps, unsupported release features, and evidence separating mock UI tests from live-service validation.
+- Outstanding placeholders/manual steps, authorization gaps, unsupported release features, and evidence separating local source/input checks from real SAP activation/service/preview validation.
 
 Conclude with a concise user-facing result and real paths/links. Do not call the app activated, published, tested, secure, or production-ready without evidence supporting that exact claim.

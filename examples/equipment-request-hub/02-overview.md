@@ -60,20 +60,4 @@ The connected request updates actual SAP service/annotation objects and verifies
 
 Do not label backend readiness a working dashboard. If aggregation is unsupported, report that real backend limitation separately from the intentionally omitted frontend.
 
-## Optional standalone overview frontend
-
-Only when you want the actual OVP app, explicitly request:
-
-```text
-Generate the standalone Equipment Request Hub overview frontend
-using the existing RAP services and the four configured cards.
-This explicitly opts this request into standalone UI scope.
-Use app ID com.example.equipmentrequests.overview under overview/.
-Verify target V4 OVP/card compatibility, implement valid filters
-and real navigation targets, and run available UI checks.
-Preserve backend data/objects and do not generate fake launchpad intents.
-```
-
-Only this opt-in adds OVP manifests, frontend build dependencies, and UI acceptance checks. A successful backend query alone does not prove that frontend works.
-
 Continue with [Example 3: analytical service and annotations](03-analytical.md).

@@ -1,6 +1,6 @@
 # IT Equipment Request Hub: three Copilot examples
 
-Use connected ABAP MCP to create and activate one custom RAP business object with three RAP-focused scenarios from the same [configuration](rap-project.json). This folder supplies input, synthetic data, and prompts to run in your environment, **not pre-generated or SAP-validated applications**. Standalone frontend generation is optional.
+Use connected ABAP MCP to create and activate one custom RAP business object with three RAP-focused scenarios from the same [configuration](rap-project.json). This folder supplies input, synthetic data, and prompts to run in your environment, **not pre-generated or SAP-validated applications**. Frontend generation is outside scope.
 
 | Run | Example | Intended result |
 | --- | --- | --- |
@@ -10,7 +10,7 @@ Use connected ABAP MCP to create and activate one custom RAP business object wit
 
 Run them in this order to reuse the backend. Chart-card data needs aggregation support even without a separate UI.
 
-**Omitting `project.uiMode` means `adt-preview`, as in this configuration.** Generate backend objects, annotations, service bindings, inventory, and preview instructions only: no local frontend folders, npm scripts, or UI5 build checks. An actual OVP is a separate frontend and does not appear automatically in ADT preview. Analytical preview capabilities also depend on the target.
+**This is a RAP backend and ADT-preview project only.** Generate backend objects, annotations, service bindings, inventory, and preview instructions: no frontend folders, npm scripts, or UI5 build checks. An actual OVP is a separate frontend outside this library and does not appear automatically in ADT preview. Analytical preview capabilities also depend on the target.
 
 ## What the app tracks
 
@@ -41,7 +41,7 @@ Follow [ADT MCP setup](../../docs/setup.md), then configure **this folder's** `r
 - Set a valid `target.transport` request/task for transportable packages; use `null` for `$TMP`.
 - Confirm actual package/language compatibility (`standard` for a compatible classic package, `cloud` only for an ABAP Cloud-compatible package); discover release/UI5 capabilities rather than guessing.
 
-Keep the template General project and the ABAP project in the same Eclipse workspace. The former stores instructions; ADT MCP creates actual ABAP objects in the latter's SAP system/package. No standalone frontend tooling is required for the default RAP task.
+Keep the template General project and the ABAP project in the same Eclipse workspace. The former stores instructions; ADT MCP creates actual ABAP objects in the latter's SAP system/package. No local frontend tooling is required for this RAP workflow.
 
 Start with this read-only preflight:
 
@@ -54,7 +54,7 @@ Inspect available ABAP MCP tools/generators and the configured target.
 Check project/package/transport access and discover ABAP/SAPUI5 versions.
 Identify support for RAP draft UI services, requested service
 annotations, and server-side OData V4 aggregation.
-Use the default RAP/ADT-preview scope, not standalone frontend generation.
+Use RAP/ADT-preview scope; frontend generation is outside this project.
 
 Report available capabilities and blockers.
 Do not create/change objects or load data during this preflight.
@@ -104,18 +104,6 @@ The primary output is actual ABAP repository objects in the confirmed SAP projec
 
 Additional read-only analytical/value-help objects may be required by the target. Inventory them rather than renaming/replacing the transactional service.
 
-## Optional standalone frontends
-
-Only if wanted, set `project.uiMode` to `standalone` or explicitly request standalone frontend generation. That additionally enables these outputs and their real UI build/browser checks:
-
-| Directory | App ID |
-| --- | --- |
-| `app/` | `com.example.equipmentrequests` |
-| `overview/` | `com.example.equipmentrequests.overview` |
-| `analytics/` | `com.example.equipmentrequests.analytics` |
-
-This is separate from connecting to SAP. Existing frontend folders do not opt in and must remain untouched in RAP scope. Their build/lint checks are not applicable, not failed RAP checks.
-
 ## Sample data and reproducible totals
 
 [requests.sample.json](requests.sample.json) contains 20 synthetic requests: 16 in USD and four in EUR. Dates are fixed fixtures, not a promise of future delivery dates. The files are not automatically inserted into SAP.
@@ -149,6 +137,6 @@ npm run check -- --config .\examples\equipment-request-hub\rap-project.json --fi
 npm test
 ```
 
-The fixture checker validates configured types, required values, defaults, and allowed-value membership. A missing `ajv` package must not be presented as a blocker to ABAP generation. The checker does not execute RAP validations, check SAP currency customizing, or prove that the target supports the floorplans. Standalone UI builds may need separate frontend tooling.
+The fixture checker validates configured types, required values, defaults, and allowed-value membership. A missing `ajv` package must not be presented as a blocker to ABAP generation. The checker does not execute RAP validations, check SAP currency customizing, or prove that the target supports preview features.
 
 For the recording/blog, show the selected skill, configuration, real tool calls, generated inventory, and **observed** checks. Only show running UI screenshots after actually launching and verifying that UI.

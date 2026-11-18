@@ -4,11 +4,9 @@
 
 For ABAP generation in Eclipse, use ADT, a tool-capable Copilot client, and a working ADT MCP connection. **Do not install Node.js/npm or restore this repository's `node_modules` just to generate ABAP or use ADT service preview.**
 
-The primary workflow uses ABAP MCP to create/update and activate real SAP repository objects. Default UI scope `project.uiMode: "adt-preview"` means RAP objects, annotations, bindings, and supported preview, **not local-only development**. Do not generate or run standalone frontend/npm projects merely because the user requests a floorplan or all examples.
+The primary workflow uses ABAP MCP to create/update and activate real SAP repository objects, including annotations, bindings, and supported ADT preview: **not local-only development**. Frontend generation is not supported. Do not generate or run frontend/npm projects for any floorplan or example.
 
 The Node.js/Ajv configuration checker is optional. When it is unavailable, Copilot must inspect the schema/configuration directly, record that review, mark the automated check as not run, and continue once genuine configuration/SAP prerequisites are satisfied. Missing `ajv` is not an SAP generation error. See the [generation contract](generation-contract.md).
-
-Standalone frontend generation requires an explicit standalone request or `project.uiMode: "standalone"`. Its build can require Node.js/npm and that project's dependencies, independently of the optional configuration checker.
 
 ## Choose how to load the templates
 
@@ -51,7 +49,7 @@ Import this repository using **File > Import > Git > Projects from Git > Clone U
 
 In **Preferences > GitHub Copilot > Custom Instructions**, choose **Referenced projects** to load instructions only for projects referenced in chat, or **All projects** when that is intentional. Reference the selected project configuration, type `/`, and select **sap-rap-development** or the relevant `rap-*` prompt. These are Eclipse chat choices, not terminal commands.
 
-The [Equipment Request Hub showcase](../examples/equipment-request-hub/README.md) supplies three RAP-focused examples: transactional preview, overview backend preparation, and analytics service/annotations. Use its configuration path explicitly instead of the root purchase-order configuration. Full overview/analytical UI apps are opt-in, not automatic ADT preview outputs.
+The [Equipment Request Hub showcase](../examples/equipment-request-hub/README.md) supplies three RAP-focused examples: transactional preview, overview backend preparation, and analytics service/annotations. Use its configuration path explicitly instead of the root purchase-order configuration. Full overview/analytical frontend apps are outside scope, not automatic ADT preview outputs.
 
 ### Older clients or unavailable prompt discovery
 
@@ -92,13 +90,13 @@ Explicitly request source-only drafting or use the saved sample `target.mode: "s
 
 The bundled samples retain source-only settings as offline inputs. The primary requests above explicitly select connected execution instead. Copilot must record that choice without silently changing configuration, and must not downgrade connected work to source-only if MCP is unavailable. An offline run must mark SAP activation, real metadata, and service-backed acceptance unverified.
 
-## Optional standalone Fiori UI tooling
+## ADT service preview
 
-Only for explicit standalone scope, generating/building a separate Fiori project requires local file access and normally Node.js, npm, and SAP Fiori tools/UI5 tooling. The installed SAPUI5 version must support the requested floorplan and service features. Do not require these tools or run existing frontend lint/build scripts for RAP-only development.
+Open the real UI service binding/entity set using the target's supported ADT preview. SAPUI5 renders the preview supplied by SAP; it does not require this library to create a local frontend, install UI5 build tools, or run npm scripts. Verify the actual publication state and supported preview features, and keep authentication details in secure client settings.
 
-For live preview, configure the generated project's real service connection/proxy using your organization's supported authentication and destination mechanism. Never embed SAP passwords or MCP tokens in a UI manifest. Launchpad publication and intent configuration are separate from generating a local app.
+An OVP is a separate frontend, not a page automatically available in ADT service preview. The overview template prepares service data/annotations and documents requirements for that separate project. Analytical preview features likewise depend on the target; a working aggregation query is not proof of a complete analytical UI.
 
-An OVP is a separate frontend, not a page automatically available in ADT service preview. Default overview generation prepares service data/annotations and documents remaining frontend work. Analytical preview features likewise depend on the target; a working aggregation query is not proof of a complete analytical UI.
+The removed `project.uiMode` option is no longer accepted. Omit it from configurations; an existing optional `project.appId` can remain as an identifier without enabling a frontend. Do not modify or run previously generated frontend files as part of this RAP workflow.
 
 ## Using the library in an existing repository
 

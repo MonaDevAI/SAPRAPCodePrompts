@@ -57,16 +57,14 @@ test("non-analytical transactional applications need no analytics or overview", 
   assert.deepEqual(validateProject(config), []);
 });
 
-test("UI scope stays optional and rejects unsupported generation intents", () => {
+test("RAP projects need no frontend app ID and reject removed UI mode settings", () => {
   const config = fresh();
+  delete config.project.appId;
   assert.deepEqual(validateProject(config), []);
-  assert.equal(Object.hasOwn(config.project, "uiMode"), false);
   for (const uiMode of ["adt-preview", "standalone"]) {
     config.project.uiMode = uiMode;
-    assert.deepEqual(validateProject(config), []);
+    assert.match(validateProject(config).join("\n"), /additional properties/);
   }
-  config.project.uiMode = "automatic";
-  assert.match(validateProject(config).join("\n"), /uiMode/);
 });
 
 test("schema errors stop semantic traversal and identify missing field details", () => {
