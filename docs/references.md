@@ -14,5 +14,8 @@ Consult documentation matching the **installed** ABAP, SAPUI5, ADT, and Copilot 
 | V4 analytical list report | [SAP: Configuring the Manifest for the Analytical List Page](https://help.sap.com/docs/SAPUI5/b2f662dd9d7a4ec680056733050b4d34/2a9df06673d34f72b238549d49da8bfb.html) |
 | Copilot prompt files | [VS Code: Use prompt files](https://code.visualstudio.com/docs/agent-customization/prompt-files) |
 | Copilot skills | [VS Code: Use Agent Skills](https://code.visualstudio.com/docs/agent-customization/agent-skills) |
+| Eclipse skills and prompts | [GitHub: Copilot in Eclipse skills, prompt files, and custom-instruction preferences](https://github.blog/changelog/2026-06-02-github-copilot-in-eclipse-byok-skills-and-chat-updates/) |
+| Eclipse MCP client settings | [GitHub: MCP configuration in Eclipse](https://docs.github.com/en/copilot/how-tos/copilot-in-your-ide/customize-copilot/extend-copilot-with-tools-and-context/set-up-the-github-mcp-server?tool=eclipse) (client UI reference; configure the SAP server, not GitHub's server, for ABAP development) |
+| Eclipse Git import | [Eclipse EGit: starting from existing Git repositories](https://help.eclipse.org/latest/topic/org.eclipse.egit.doc/help/EGit/User_Guide/Tasks.html#Starting_from_existing_Git_Repositories) |
 
 Source material remains with its respective owners. The templates are original instructions, not a bundled copy of SAP documentation or generated SAP framework code.

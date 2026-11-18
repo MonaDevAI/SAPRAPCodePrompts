@@ -29,7 +29,17 @@ Examples for a supporting Local session:
 
 These are editor chat commands, not PowerShell commands.
 
-### Eclipse or another client without prompt discovery
+### Eclipse skills and prompt files
+
+Updated GitHub Copilot for Eclipse supports `.github/skills` and `.github/prompts` through the chat `/` picker. Install/update the plugin from **Help > Eclipse Marketplace**.
+
+Import this repository using **File > Import > Git > Projects from Git > Clone URI**, clone `main` outside the workspace, and choose **Import as General Project** with the repository root selected. No individual prompt files need to be copied.
+
+In **Preferences > GitHub Copilot > Custom Instructions**, choose **Referenced projects** to load instructions only for projects referenced in chat, or **All projects** when that is intentional. Reference the selected project configuration, type `/`, and select **sap-rap-development** or the relevant `rap-*` prompt. These are Eclipse chat choices, not terminal commands.
+
+The [Equipment Request Hub showcase](../examples/equipment-request-hub/README.md) supplies a configuration and requests for all three UI examples. Use its configuration path explicitly instead of the root purchase-order configuration.
+
+### Older clients or unavailable prompt discovery
 
 Use the editor's supported file-attachment/context mechanism to supply:
 
@@ -53,6 +63,8 @@ An unconnected run must mark SAP activation, real metadata, and service-backed a
 4. Connect your Copilot client's MCP integration to the exact endpoint and authentication details shown by your ADT installation. Store the generated token in secure client settings, not this repository.
 5. Keep Eclipse and the relevant ABAP project connected. Verify that Copilot can discover the selected project and list available tools/generators.
 6. Set `target.mode` to `connected` and configure the real ADT project, package, and transport request/task in `rap-project.json`.
+
+For Eclipse Copilot, its client-side MCP configuration is under **Preferences > GitHub Copilot > MCP** (also accessible through chat's **Configure Tools** action). This is separate from **ABAP Development > MCP Server**. Use the actual ADT server endpoint/authentication requirements, not the GitHub MCP server URL or a GitHub PAT.
 
 Enabling Eclipse's server and enabling an MCP client are separate steps. Available tools, licensing, experimental-feature restrictions, SAP release support, and permissions depend on your installation. Follow the linked SAP documentation rather than assuming a tool name, port, or capability.
 

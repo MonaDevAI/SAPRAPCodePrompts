@@ -18,6 +18,16 @@ This is a prompt library, not a generator executable or an SAP product. Markdown
 
 UI prompts reuse an existing compatible RAP backend or create the required backend first. Running multiple prompts for the same configuration must reuse objects, not create duplicate business objects.
 
+## Three-example showcase
+
+The [IT Equipment Request Hub](examples/equipment-request-hub/README.md) includes one complete configuration, 20 synthetic requests, and three Eclipse/Copilot walkthroughs:
+
+1. [List report + object page](examples/equipment-request-hub/01-transactional.md).
+2. [Overview page](examples/equipment-request-hub/02-overview.md).
+3. [Analytical page](examples/equipment-request-hub/03-analytical.md).
+
+The examples reuse one RAP business object and need no real supplier/material masters. They include copyable Copilot requests and expected fixture totals, not pre-generated or SAP-validated applications. Use the showcase configuration path explicitly; the root configuration remains the purchase-order example.
+
 ## Quick start
 
 1. Select **Use this template > Create a new repository** on GitHub, then clone your new repository and open its root in your Copilot-enabled editor. No individual prompt files need to be copied.
@@ -48,7 +58,7 @@ UI prompts reuse an existing compatible RAP backend or create the required backe
 
 **VS Code Local sessions:** clients supporting prompt files also expose `/rap-business-object`, `/rap-list-report`, `/rap-object-page`, `/rap-overview-page`, and `/rap-analytical-page`. Current VS Code documentation restricts prompt-file execution to its Local harness and recommends skills for newer Copilot harness sessions. Use the included [skill](.github/skills/sap-rap-development/SKILL.md) or the attachment workflow rather than assuming these commands exist in every editor.
 
-**Eclipse:** use a Copilot client with the required file/context capabilities and, for connected generation, an enabled ADT MCP server. Eclipse hosting an MCP server does not itself guarantee prompt-file or skill discovery. See [setup](docs/setup.md).
+**Eclipse:** updated GitHub Copilot for Eclipse supports skills and prompt files in the chat `/` picker. Import the whole repository as a General project, reference the selected configuration, and choose the skill or prompt. Connected SAP generation additionally needs an enabled/configured ADT MCP server. See [setup](docs/setup.md).
 
 ## Minimal configuration
 
@@ -115,6 +125,14 @@ To validate another configuration:
 npm run check -- --config .\my-project.json
 ```
 
+To also validate the showcase's synthetic fixture records:
+
+```powershell
+npm run check -- --config .\examples\equipment-request-hub\rap-project.json --fixtures .\examples\equipment-request-hub\requests.sample.json
+```
+
+Fixture checks cover the configured types, required values, defaults, and allowed-value membership; generated RAP business-rule tests and live-service checks remain separate.
+
 Do not commit passwords, MCP tokens, destinations containing credentials, or authenticated browser state. Keep local MCP connection settings in your client's secure configuration.
 
 ## Contents
@@ -124,6 +142,7 @@ Do not commit passwords, MCP tokens, destinations containing credentials, or aut
 - `docs`: shared generation rules, editor setup, and official references.
 - `rap-project.json`: the single editable configuration and purchase-order example.
 - `rap-project.schema.json`: the configuration contract.
+- `examples/equipment-request-hub`: the three-floorplan showcase configuration, fixtures, and walkthroughs.
 - `scripts` and `tests`: repository/configuration checks and focused regression tests.
 
 See [official references](docs/references.md) for SAP RAP, ADT MCP, Fiori elements, and Copilot documentation. MIT licensed; not affiliated with or endorsed by SAP or GitHub.

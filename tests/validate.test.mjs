@@ -3,14 +3,51 @@ import { mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import test from "node:test";
-import { validateMarkdownLinks, validateProject, validateRepository } from "../scripts/validate.mjs";
+import { validateFixture, validateMarkdownLinks, validateProject, validateRepository } from "../scripts/validate.mjs";
 
 const example = JSON.parse(readFileSync(new URL("../rap-project.json", import.meta.url), "utf8"));
+const equipment = JSON.parse(readFileSync(new URL("../examples/equipment-request-hub/rap-project.json", import.meta.url), "utf8"));
+const requests = JSON.parse(readFileSync(new URL("../examples/equipment-request-hub/requests.sample.json", import.meta.url), "utf8"));
 const fresh = () => structuredClone(example);
 
 test("the complete example and repository validate", () => {
   assert.deepEqual(validateProject(fresh()), []);
   assert.deepEqual(validateRepository(), []);
+});
+
+test("both bundled configurations and their synthetic fixture records validate", () => {
+  const orders = JSON.parse(readFileSync(new URL("../examples/purchase-orders.sample.json", import.meta.url), "utf8"));
+  assert.deepEqual(validateFixture(example, orders), []);
+  assert.deepEqual(validateProject(equipment), []);
+  assert.deepEqual(validateFixture(equipment, requests), []);
+});
+
+test("fixture validation rejects invalid fields, values, and missing requirements", () => {
+  const record = structuredClone(requests[0]);
+  record.EquipmentType = "UNKNOWN";
+  record.Quantity = 1.5;
+  record.EstimatedAmount = "1.999";
+  record.Unconfigured = "unexpected";
+  delete record.RequiredDate;
+  const errors = validateFixture(equipment, [record]).join("\n");
+  assert.match(errors, /EquipmentType is not an allowed value/);
+  assert.match(errors, /Quantity does not fit/);
+  assert.match(errors, /EstimatedAmount does not fit/);
+  assert.match(errors, /unknown field Unconfigured/);
+  assert.match(errors, /missing required field RequiredDate/);
+});
+
+test("fixture validation supports configured defaults and reports malformed input explicitly", () => {
+  const record = structuredClone(requests[0]);
+  delete record.Status;
+  delete record.Quantity;
+  assert.deepEqual(validateFixture(equipment, [record]), []);
+  assert.match(validateFixture(equipment, null).join("\n"), /non-empty array/);
+  assert.match(validateFixture(equipment, []).join("\n"), /non-empty array/);
+  assert.equal(validateFixture(equipment, [null, []]).length, 2);
+  assert.match(validateFixture(null, requests).join("\n"), /fix project configuration/);
+  record.Office = " ";
+  assert.match(validateFixture(equipment, [record]).join("\n"), /Office does not fit/);
 });
 
 test("non-analytical transactional applications need no analytics or overview", () => {

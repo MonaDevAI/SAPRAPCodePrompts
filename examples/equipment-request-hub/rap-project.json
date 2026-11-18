@@ -1,0 +1,196 @@
+{
+  "$schema": "../../rap-project.schema.json",
+  "project": {
+    "appId": "com.example.equipmentrequests",
+    "title": "IT Equipment Request Hub",
+    "entity": "EquipmentRequest",
+    "entitySet": "EquipmentRequests",
+    "shortName": "EQR",
+    "namespacePrefix": "ZRC",
+    "outputDirectory": "generated/equipment-request-hub"
+  },
+  "target": {
+    "mode": "source-only",
+    "adtProject": "",
+    "package": "$TMP",
+    "transport": null,
+    "abapLanguageVersion": "cloud",
+    "odataVersion": "4.0",
+    "ui5Version": null
+  },
+  "businessObject": {
+    "implementation": "managed",
+    "draft": true,
+    "fields": [
+      {
+        "name": "RequestNumber",
+        "label": "Request Number",
+        "type": "string",
+        "length": 20,
+        "required": true
+      },
+      {
+        "name": "RequestedOn",
+        "label": "Requested On",
+        "type": "date",
+        "required": true
+      },
+      {
+        "name": "EquipmentType",
+        "label": "Equipment",
+        "type": "string",
+        "length": 10,
+        "required": true,
+        "allowedValues": [
+          { "value": "LAPTOP", "label": "Laptop" },
+          { "value": "MONITOR", "label": "Monitor" },
+          { "value": "DOCK", "label": "Docking Station" },
+          { "value": "HEADSET", "label": "Headset" }
+        ]
+      },
+      {
+        "name": "Office",
+        "label": "Office",
+        "type": "string",
+        "length": 10,
+        "required": true,
+        "allowedValues": [
+          { "value": "NY", "label": "New York" },
+          { "value": "LONDON", "label": "London" },
+          { "value": "BERLIN", "label": "Berlin" }
+        ]
+      },
+      {
+        "name": "Quantity",
+        "label": "Requested Units",
+        "type": "integer",
+        "required": true,
+        "default": 1
+      },
+      {
+        "name": "EstimatedAmount",
+        "label": "Estimated Total Cost",
+        "type": "amount",
+        "precision": 15,
+        "scale": 2,
+        "currencyField": "CurrencyCode",
+        "required": true
+      },
+      {
+        "name": "CurrencyCode",
+        "label": "Currency",
+        "type": "currency",
+        "required": true,
+        "default": "USD",
+        "allowedValues": [
+          { "value": "USD", "label": "US Dollar" },
+          { "value": "EUR", "label": "Euro" }
+        ]
+      },
+      {
+        "name": "RequiredDate",
+        "label": "Required By",
+        "type": "date",
+        "required": true
+      },
+      {
+        "name": "Priority",
+        "label": "Priority",
+        "type": "string",
+        "length": 1,
+        "required": true,
+        "default": "M",
+        "allowedValues": [
+          { "value": "L", "label": "Low" },
+          { "value": "M", "label": "Medium" },
+          { "value": "H", "label": "High" }
+        ]
+      },
+      {
+        "name": "Status",
+        "label": "Status",
+        "type": "string",
+        "length": 1,
+        "required": true,
+        "default": "N",
+        "allowedValues": [
+          { "value": "N", "label": "New" },
+          { "value": "R", "label": "In Review" },
+          { "value": "F", "label": "Fulfilled" }
+        ]
+      }
+    ]
+  },
+  "ui": {
+    "selectionFields": ["RequestNumber", "EquipmentType", "Office", "Priority", "Status", "CurrencyCode", "RequiredDate"],
+    "lineItems": ["RequestNumber", "EquipmentType", "Office", "Quantity", "EstimatedAmount", "CurrencyCode", "RequiredDate", "Priority", "Status"],
+    "fieldGroups": [
+      {
+        "id": "Request",
+        "label": "Request Details",
+        "fields": ["RequestNumber", "RequestedOn", "EquipmentType", "Quantity"]
+      },
+      {
+        "id": "Delivery",
+        "label": "Delivery and Priority",
+        "fields": ["Office", "RequiredDate", "Priority"]
+      },
+      {
+        "id": "Cost",
+        "label": "Estimated Cost",
+        "fields": ["EstimatedAmount", "CurrencyCode"]
+      },
+      {
+        "id": "Tracking",
+        "label": "Tracking",
+        "fields": ["Status"]
+      }
+    ],
+    "overview": {
+      "cards": [
+        {
+          "id": "RecentRequests",
+          "kind": "list",
+          "title": "Recent Equipment Requests",
+          "fields": ["RequestNumber", "EquipmentType", "Status"],
+          "sortBy": "RequestedOn",
+          "sortDescending": true
+        },
+        {
+          "id": "RequiredDates",
+          "kind": "list",
+          "title": "Requests by Required Date",
+          "fields": ["RequestNumber", "Office", "RequiredDate"],
+          "sortBy": "RequiredDate",
+          "sortDescending": false
+        },
+        {
+          "id": "CostByEquipment",
+          "kind": "chart",
+          "title": "Estimated Cost by Equipment",
+          "dimension": "EquipmentType",
+          "measure": "EstimatedAmount"
+        },
+        {
+          "id": "UnitsByOffice",
+          "kind": "chart",
+          "title": "Requested Units by Office",
+          "dimension": "Office",
+          "measure": "Quantity"
+        }
+      ]
+    },
+    "analytics": {
+      "dimensions": ["EquipmentType", "Office", "Priority", "Status", "CurrencyCode"],
+      "measures": [
+        { "field": "EstimatedAmount", "aggregation": "SUM" },
+        { "field": "Quantity", "aggregation": "SUM" }
+      ],
+      "chart": {
+        "type": "column",
+        "dimension": "EquipmentType",
+        "measure": "EstimatedAmount"
+      }
+    }
+  }
+}

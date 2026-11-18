@@ -171,6 +171,38 @@ export function validateProject(project) {
   return errors;
 }
 
+export function validateFixture(project, records) {
+  if (validateProject(project).length) return ["fixture: fix project configuration errors first"];
+  if (!Array.isArray(records) || !records.length) return ["fixture: expected a non-empty array of records"];
+  const errors = [];
+  const { fields } = project.businessObject;
+  const names = new Set(fields.map((field) => field.name));
+  for (const [index, record] of records.entries()) {
+    const context = `fixture row ${index + 1}`;
+    if (!record || typeof record !== "object" || Array.isArray(record)) {
+      errors.push(`${context}: expected a record object`);
+      continue;
+    }
+    for (const name of Object.keys(record)) {
+      if (!names.has(name)) errors.push(`${context}: unknown field ${name}`);
+    }
+    for (const field of fields) {
+      if (!Object.hasOwn(record, field.name)) {
+        if (field.required && field.default === undefined) errors.push(`${context}: missing required field ${field.name}`);
+        continue;
+      }
+      const value = record[field.name];
+      if (!valueFits(field, value) || (field.required && typeof value === "string" && !value.trim())) {
+        errors.push(`${context}: ${field.name} does not fit its required value/type/size`);
+      }
+      if (field.allowedValues && !field.allowedValues.some((entry) => entry.value === value)) {
+        errors.push(`${context}: ${field.name} is not an allowed value`);
+      }
+    }
+  }
+  return errors;
+}
+
 function withoutCodeFences(markdown) {
   let fence = null;
   return markdown.split(/\r?\n/).map((line) => {
@@ -253,16 +285,23 @@ export function validateRepository(root = repositoryRoot) {
 }
 
 function main() {
-  const { values } = parseArgs({ options: { config: { type: "string" } } });
+  const { values } = parseArgs({
+    options: { config: { type: "string" }, fixtures: { type: "string" } },
+  });
   const configPath = values.config ? resolve(values.config) : resolve(repositoryRoot, "rap-project.json");
   const project = JSON.parse(readFileSync(configPath, "utf8"));
   const errors = [...validateProject(project), ...validateRepository()];
+  if (values.fixtures) {
+    const records = JSON.parse(readFileSync(resolve(values.fixtures), "utf8"));
+    errors.push(...validateFixture(project, records));
+  }
   if (errors.length) {
     for (const error of errors) process.stderr.write(`ERROR: ${error}\n`);
     process.exitCode = 1;
     return;
   }
   process.stdout.write(`Validated ${relative(repositoryRoot, configPath)}; five prompts, skill metadata, and local Markdown links are consistent.\n`);
+  if (values.fixtures) process.stdout.write("Fixture records match configured business-field constraints.\n");
   process.stdout.write("SAP activation, generated application builds, and live UI behavior were not tested by this check.\n");
 }
 
