@@ -72,7 +72,7 @@ If a needed tool is unavailable, attempt another supported path within scope. Wh
 
 ## 3. Discover before generating
 
-Read repository instructions and relevant existing sources. Inspect target ABAP release/language version, released APIs/types, generators, service definitions/bindings, and authorization conventions. Discover the installed SAPUI5 version when needed to verify preview/annotation compatibility. Do not inspect or require local Fiori scaffolding/build tools for RAP development.
+Read repository instructions and relevant existing sources. Inspect target ABAP release/language version, released APIs/types, generators, service definitions/bindings, and existing access restrictions. Discover the installed SAPUI5 version when needed to verify preview/annotation compatibility. Do not inspect or require local Fiori scaffolding/build tools for RAP development.
 
 Find artifacts by configured names and inspect their contents. An existing name alone does not establish a compatible backend. Reuse an existing compatible BO/service; do not repeatedly create one when the user runs several UI prompts.
 
@@ -89,7 +89,7 @@ For a new project, use these deterministic names unless the target requires a do
 | Service definition | `<prefix>_UI_<shortName>` | `ZRC_UI_PO` |
 | V4 UI service binding | `<prefix>_UI_<shortName>_O4` | `ZRC_UI_PO_O4` |
 
-Keep database table names within 16 characters and the other listed ABAP object names within 30. Additional analytical/value-help/authorization objects need a collision-checked, length-checked suffix and an explicit inventory entry. Never truncate two names into the same identifier.
+Keep database table names within 16 characters and the other listed ABAP object names within 30. Additional analytical/value-help objects need a collision-checked, length-checked suffix and an explicit inventory entry. Never truncate two names into the same identifier.
 
 The service exposes `project.entitySet` as its public alias. Technical object names, CDS aliases, service entity-set names, and UI routing paths are related but not interchangeable; verify actual metadata.
 
@@ -103,10 +103,10 @@ The service exposes `project.entitySet` as its public alias. Technical object na
 - Validate string lengths and date/numeric values using the actual ABAP types. `string` maps to a length-bounded character field, `integer` to an appropriate signed integer, and `boolean` to a supported ABAP boolean representation.
 - `decimal` is a fixed-precision number. `amount` and `quantity` also carry the configured currency/unit semantics. `currency` and `unit` use supported SAP currency/unit types, not arbitrary text columns.
 - In ABAP Cloud mode, use released objects/APIs only. Do not reach for unreleased tables, classic function modules, or obsolete BOPF generation to work around an error.
-- Preserve existing authorization behavior. For new source-only demos, explicitly document any unimplemented DCL/authorization policy and that the result is not production-ready. Connected work must discover/apply an authorized policy or report authorization as incomplete. Never add allow-all DCL or `#NOT_REQUIRED` simply to hide an authorization failure.
+- Preserve existing access checks. Creating new authorization objects, DCL, and custom authorization implementations is outside this scaffold. Do not remove or bypass existing checks to resolve SAP errors.
 - Do not generate sample-data insertion programs or call write APIs unless the user requested/authorized test-data creation. Use synthetic fixtures for local mock tests.
 
-Generate/activate in the target's valid dependency order: persistence and prerequisites, view entities, behavior definitions/implementations, projections and projection behavior, metadata/authorization, service definition, and service binding. Some generators create interdependent objects as a group; respect their supported activation flow.
+Generate/activate in the target's valid dependency order: persistence and prerequisites, view entities, behavior definitions/implementations, projections and projection behavior, metadata, service definition, and service binding. Some generators create interdependent objects as a group; respect their supported activation flow.
 
 ## 5. Deliver RAP objects and ADT preview
 
@@ -147,6 +147,6 @@ Write `GENERATION-REPORT.md` under the configured output, containing:
 - Actual MCP operations/results establishing SAP-side creation/update and activation. List partial/inactive objects and unavailable operations explicitly; never substitute a list of planned objects or local files as evidence.
 - Real service URL/binding where known and import/activation/ADT-preview steps.
 - A verification table with each check marked **passed**, **failed**, **blocked**, **not run**, or **not applicable**, including the exact command/tool where applicable, observed result, and reason for missing or out-of-scope checks.
-- Outstanding placeholders/manual steps, authorization gaps, unsupported release features, and evidence separating local source/input checks from real SAP activation/service/preview validation.
+- Outstanding placeholders/manual steps, SAP access/permission blockers, unsupported release features, and evidence separating local source/input checks from real SAP activation/service/preview validation.
 
 Conclude with a concise user-facing result and real paths/links. Do not call the app activated, published, tested, secure, or production-ready without evidence supporting that exact claim.

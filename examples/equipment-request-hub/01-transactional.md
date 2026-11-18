@@ -30,7 +30,7 @@ draft actions, configured defaults, fixed-value helps/texts,
 required-field checks, and allowed-value validations.
 Also validate Quantity > 0 and EstimatedAmount >= 0;
 these are additional business rules beyond the JSON field constraints.
-Apply the target's authorization policy and preserve currency semantics.
+Preserve currency semantics.
 Reuse compatible existing SAP objects. Do not load test data or add
 approval/purchasing integrations.
 

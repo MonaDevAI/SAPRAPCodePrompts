@@ -62,7 +62,7 @@ The examples reuse one RAP business object and need no real supplier/material ma
    - A service definition and OData V4 UI service binding.
 
    Use UUID keys, audit fields, entity ETags, and the draft total ETag.
-   Preserve currency/unit semantics and apply the target's authorization policy.
+   Preserve currency/unit semantics.
    Reuse compatible existing SAP objects.
 
    Activate the objects in dependency order, correct introduced errors,

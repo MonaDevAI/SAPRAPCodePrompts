@@ -24,7 +24,7 @@ Use the configured ADT project, development package, transport, namespace prefix
 5. Implement configured defaults, required-field validation, and allowed-value validation using supported determinations/validations and standard RAP `failed`/`reported` messages. Marking a UI field required is not a substitute for server-side validation. Do not add business actions such as approval unless their business rules were requested.
 6. Where a field declares `allowedValues`, provide a supported fixed-value help/text solution as well as server validation. Do not invent references to nonexistent value-help entities.
 7. Generate the service definition and an OData V4 **UI** service binding. In source-only mode, provide service-binding creation/publication instructions if the binding cannot be represented faithfully as an importable source artifact.
-8. Add baseline metadata for labels and a meaningful line item so an ADT service preview can be inspected. Keep authorization requirements explicit as defined in the contract.
+8. Add baseline metadata for labels and a meaningful line item so an ADT service preview can be inspected.
 9. In connected execution, create/update these SAP repository objects through ABAP MCP, activate in dependency order, inspect diagnostics, and correct introduced errors. Read back the object contents/activation state and verify the actual service binding. Record any unavailable creation, activation, or publication operation as incomplete.
 
 ## RAP verification
