@@ -1,0 +1,34 @@
+[
+  {
+    "PurchaseOrderNumber": "DEMO-1001",
+    "SupplierName": "Example Supplier A",
+    "OrderDate": "2026-01-10",
+    "NetAmount": "100.00",
+    "CurrencyCode": "USD",
+    "Status": "N"
+  },
+  {
+    "PurchaseOrderNumber": "DEMO-1002",
+    "SupplierName": "Example Supplier B",
+    "OrderDate": "2026-01-11",
+    "NetAmount": "50.00",
+    "CurrencyCode": "USD",
+    "Status": "N"
+  },
+  {
+    "PurchaseOrderNumber": "DEMO-1003",
+    "SupplierName": "Example Supplier C",
+    "OrderDate": "2026-01-12",
+    "NetAmount": "200.00",
+    "CurrencyCode": "USD",
+    "Status": "A"
+  },
+  {
+    "PurchaseOrderNumber": "DEMO-1004",
+    "SupplierName": "Example Supplier D",
+    "OrderDate": "2026-01-13",
+    "NetAmount": "80.00",
+    "CurrencyCode": "EUR",
+    "Status": "N"
+  }
+]

@@ -1,0 +1,120 @@
+{
+  "$schema": "./rap-project.schema.json",
+  "project": {
+    "appId": "com.example.purchaseorders",
+    "title": "Purchase Orders",
+    "entity": "PurchaseOrder",
+    "entitySet": "PurchaseOrders",
+    "shortName": "PO",
+    "namespacePrefix": "ZRC",
+    "outputDirectory": "generated/purchase-orders"
+  },
+  "target": {
+    "mode": "source-only",
+    "adtProject": "",
+    "package": "$TMP",
+    "transport": null,
+    "abapLanguageVersion": "cloud",
+    "odataVersion": "4.0",
+    "ui5Version": null
+  },
+  "businessObject": {
+    "implementation": "managed",
+    "draft": true,
+    "fields": [
+      {
+        "name": "PurchaseOrderNumber",
+        "label": "Purchase Order",
+        "type": "string",
+        "length": 20,
+        "required": true
+      },
+      {
+        "name": "SupplierName",
+        "label": "Supplier",
+        "type": "string",
+        "length": 80,
+        "required": true
+      },
+      {
+        "name": "OrderDate",
+        "label": "Order Date",
+        "type": "date",
+        "required": true
+      },
+      {
+        "name": "NetAmount",
+        "label": "Net Amount",
+        "type": "amount",
+        "precision": 15,
+        "scale": 2,
+        "currencyField": "CurrencyCode"
+      },
+      {
+        "name": "CurrencyCode",
+        "label": "Currency",
+        "type": "currency",
+        "required": true
+      },
+      {
+        "name": "Status",
+        "label": "Status",
+        "type": "string",
+        "length": 1,
+        "required": true,
+        "default": "N",
+        "allowedValues": [
+          { "value": "N", "label": "New" },
+          { "value": "A", "label": "Approved" },
+          { "value": "C", "label": "Closed" }
+        ]
+      }
+    ]
+  },
+  "ui": {
+    "selectionFields": ["PurchaseOrderNumber", "SupplierName", "Status", "OrderDate"],
+    "lineItems": ["PurchaseOrderNumber", "SupplierName", "OrderDate", "NetAmount", "CurrencyCode", "Status"],
+    "fieldGroups": [
+      {
+        "id": "General",
+        "label": "General Information",
+        "fields": ["PurchaseOrderNumber", "SupplierName", "OrderDate", "Status"]
+      },
+      {
+        "id": "Amounts",
+        "label": "Amounts",
+        "fields": ["NetAmount", "CurrencyCode"]
+      }
+    ],
+    "overview": {
+      "cards": [
+        {
+          "id": "RecentOrders",
+          "kind": "list",
+          "title": "Recent Purchase Orders",
+          "fields": ["PurchaseOrderNumber", "SupplierName", "NetAmount"],
+          "sortBy": "OrderDate",
+          "sortDescending": true
+        },
+        {
+          "id": "AmountByStatus",
+          "kind": "chart",
+          "title": "Net Amount by Status",
+          "dimension": "Status",
+          "measure": "NetAmount"
+        }
+      ]
+    },
+    "analytics": {
+      "dimensions": ["Status", "CurrencyCode"],
+      "measures": [
+        { "field": "NetAmount", "aggregation": "SUM" }
+      ],
+      "chart": {
+        "type": "column",
+        "dimension": "Status",
+        "measure": "NetAmount"
+      }
+    }
+  }
+}

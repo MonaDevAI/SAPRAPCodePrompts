@@ -1,0 +1,18 @@
+{
+  "name": "sap-rap-code-prompts",
+  "version": "0.1.0",
+  "private": true,
+  "description": "GitHub Copilot prompts for ABAP RAP and RAP-based SAP Fiori elements applications",
+  "type": "module",
+  "license": "MIT",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "check": "node scripts/validate.mjs",
+    "test": "node --test"
+  },
+  "devDependencies": {
+    "ajv": "^8.17.1"
+  }
+}
