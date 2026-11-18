@@ -6,42 +6,39 @@ Start with the [shared example setup](README.md). Select the **sap-rap-developme
 
 ```text
 Use the sap-rap-development skill.
-Use examples\equipment-request-hub\rap-project.json,
-not the root purchase-order configuration.
-Read docs\generation-contract.md and follow the RAP business-object,
+Act as an ABAP RAP developer. Develop a managed, draft-enabled
+EquipmentRequest business object using
+examples\equipment-request-hub\rap-project.json.
+
+Use connected ABAP MCP and the confirmed ADT project, development
+package, transport, and compatible ABAP language version.
+Follow docs\generation-contract.md and the RAP business-object,
 list-report, and object-page templates.
 
-Generate the IT Equipment Request Hub:
-- One managed draft-enabled RAP BO with UUID keys and correct ETags.
-- CDS/UI annotations for list-report filters and columns.
-- Object-page annotations for Request, Delivery, Cost, and Tracking sections.
-- Supported value helps/texts for the configured fixed-value fields.
-- Server-side required-field and allowed-value validations.
+Create or extend these artifacts using the configured naming rules
+(names below are for the supplied ZRC prefix and EQR short name):
+- Active table ZRC_T_EQR and draft table ZRC_D_EQR.
+- Root/interface CDS entity ZRC_R_EQR and projection ZRC_C_EQR.
+- Root/projection behavior definitions and behavior pool ZBP_ZRC_EQR.
+- CDS metadata extensions for list columns, filters, header, and
+  Request, Delivery, Cost, and Tracking field groups.
+- Service definition ZRC_UI_EQR and OData V4 UI binding ZRC_UI_EQR_O4,
+  exposing entity set EquipmentRequests.
 
-Also implement these explicit demo-specific business rules:
-Quantity must be greater than zero.
-EstimatedAmount must be greater than or equal to zero.
-These rules are additional requirements, not constraints already
-expressed by the JSON schema.
+Implement UUID keys, audit fields, entity ETags, total draft ETag,
+draft actions, configured defaults, fixed-value helps/texts,
+required-field checks, and allowed-value validations.
+Also validate Quantity > 0 and EstimatedAmount >= 0;
+these are additional business rules beyond the JSON field constraints.
+Apply the target's authorization policy and preserve currency semantics.
+Reuse compatible existing SAP objects. Do not load test data or add
+approval/purchasing integrations.
 
-Use ABAP MCP in connected mode to create/update and activate these
-objects in SAP, even if the saved sample still says source-only.
-Discover actual MCP/generator schemas and reuse compatible SAP objects.
-Resolve and validate the real project/package/transport/language
-before writes; do not silently edit the configuration.
-Read back SAP object contents/activation state and verify real metadata.
-Do not stop after generating local files. Report unavailable MCP
-creation/activation operations as connected-development blockers.
-Use RAP/ADT-preview scope: no standalone frontend projects,
-UI manifests, npm scripts, or local UI verification harnesses.
-Do not run existing generated frontend lint/build scripts.
-Do not create purchasing integrations or an approval workflow.
-Do not insert sample data yet.
-
-Run available checks. Provide actual object/file locations,
-the real service binding and preview steps where available,
-and a report distinguishing passed, failed, blocked, and unrun checks.
-Do not claim local source generation activated anything in SAP.
+Activate in dependency order, correct introduced errors, read back
+the active SAP objects, and check the real service metadata.
+Run applicable ATC/ABAP Unit checks and supported ADT preview.
+Return the SAP object inventory, activation/check results, preview
+steps, and any unresolved target or tool limitations.
 ```
 
 ## Intended results

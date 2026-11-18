@@ -1,26 +1,24 @@
 # SAPRAPCodePrompts
 
-**Connect ABAP MCP. Ask GitHub Copilot to create and activate your RAP application in SAP.**
+**ABAP RAP development prompts for GitHub Copilot and ABAP MCP.**
 
-Reusable Markdown prompts for connected ABAP RAP development. Describe your business entity in one JSON file, choose a prompt, and let Copilot use ABAP/ADT MCP to create RAP objects, CDS/UI annotations, and service bindings in your SAP development target, activate them, and verify supported ADT preview. Frontend project generation is not supported.
+Develop managed, draft-enabled RAP business objects directly in SAP: persistence tables, CDS view entities, behavior definitions and implementations, metadata extensions, and OData V4 UI services. Use the prompts with connected ABAP/ADT MCP to create, activate, and check these objects in your development package.
 
 This is a prompt library, not a generator executable or an SAP product. Markdown provides instructions to Copilot; the available tools, SAP release, and permissions determine what it can actually generate, activate, and test.
 
-**No npm setup is required to generate ABAP through Eclipse ADT MCP.** Node.js/npm/Ajv are optional tools for this repository's automated configuration checks. Without them, Copilot must inspect the inputs directly, report that the automated check was not run, and continue once actual configuration/SAP requirements are satisfied.
+## Choose a RAP prompt
 
-## Choose a template
-
-| Template | Default RAP output |
+| RAP prompt | ABAP development deliverables |
 | --- | --- |
 | [RAP business object](.github/prompts/rap-business-object.prompt.md) | Managed, draft-enabled RAP BO, persistence, CDS views, behavior, and OData V4 UI service |
-| [List report](.github/prompts/rap-list-report.prompt.md) | Service/UI annotations for columns, filters, search, and supported ADT list preview |
-| [Object page](.github/prompts/rap-object-page.prompt.md) | Draft behavior and annotations for sections, field groups, and supported detail/edit preview |
-| [Overview page](.github/prompts/rap-overview-page.prompt.md) | RAP data/annotation preparation and a card mapping; an actual OVP frontend is separate |
-| [Analytical page](.github/prompts/rap-analytical-page.prompt.md) | Read-only analytical service support, aggregation checks, chart/table annotations, and supported preview instructions |
+| [List-report CDS annotations](.github/prompts/rap-list-report.prompt.md) | Metadata extensions for columns, filters, search, and supported ADT list preview |
+| [Object-page behavior and annotations](.github/prompts/rap-object-page.prompt.md) | Draft behavior, facets, field groups, value helps, and supported detail/edit preview |
+| [Overview data services](.github/prompts/rap-overview-page.prompt.md) | RAP service entities, qualified annotations, and card-to-entity mappings |
+| [Analytical CDS and service](.github/prompts/rap-analytical-page.prompt.md) | Read-only analytical entities, aggregation support, chart/table annotations, and service-query checks |
 
-UI prompts reuse an existing compatible RAP backend or create the required backend first. Running multiple prompts for the same configuration must reuse objects, not create duplicate business objects.
+Annotation and analytical-service prompts reuse a compatible RAP business object or create missing prerequisites first. Running multiple prompts for the same configuration must reuse objects, not create duplicate business objects.
 
-**Scope is RAP backend development and ADT preview only.** No frontend folders, UI manifests, npm scripts, UI5 build configuration, or frontend lint/build checks are generated or run. ADT preview does not automatically render an overview page or every analytical feature. Full frontend applications belong in a separate project, outside this library's [generation contract](docs/generation-contract.md).
+Scope is ABAP RAP development and supported ADT service preview, as defined in the [generation contract](docs/generation-contract.md). Overview data services and analytical annotations do not by themselves create a complete dashboard or analytical UI.
 
 ## Three-example showcase
 
@@ -45,15 +43,31 @@ The examples reuse one RAP business object and need no real supplier/material ma
 
 2. Connect/authenticate [ABAP ADT MCP](docs/setup.md) in Eclipse. Edit [rap-project.json](rap-project.json) with your real ADT project, authorized package, transport, and package-compatible ABAP language version; select `target.mode: "connected"`. The supplied business model is complete, but its saved `source-only` target is an offline sample, not a connected SAP configuration. For a different business entity, update names, fields, and UI references.
 
-3. Ask Copilot:
+3. Give Copilot this RAP development prompt:
 
    ```text
-   Use the sap-rap-development skill with rap-project.json.
-   Use ABAP MCP in connected mode to create and activate the RAP backend
-   and list/object-page annotations in the configured SAP development target.
-   Discover the real tools and resolve missing target details before writes.
-   Verify activation, service metadata, and supported ADT preview.
-   Do not stop at local files or generate a standalone frontend.
+   Use the sap-rap-development skill.
+   Act as an ABAP RAP developer and develop the business object
+   defined in rap-project.json using connected ABAP MCP.
+
+   Use the configured ADT project, development package, transport,
+   and compatible ABAP language version. Resolve missing target details first.
+
+   Create a managed, draft-enabled RAP business object with:
+   - Active and draft persistence tables.
+   - Root/interface and projection CDS view entities.
+   - Root and projection behavior definitions.
+   - A behavior pool with defaults and server-side validations.
+   - CDS metadata extensions for list-report and object-page annotations.
+   - A service definition and OData V4 UI service binding.
+
+   Use UUID keys, audit fields, entity ETags, and the draft total ETag.
+   Preserve currency/unit semantics and apply the target's authorization policy.
+   Reuse compatible existing SAP objects.
+
+   Activate the objects in dependency order, correct introduced errors,
+   and verify their SAP activation state and real service metadata.
+   Provide the object inventory, check results, and ADT preview steps.
    ```
 
    If your editor does not discover skills, attach the chosen `.prompt.md`, [generation contract](docs/generation-contract.md), and `rap-project.json` to chat and say:

@@ -1,11 +1,11 @@
 ---
 name: sap-rap-development
-description: Create and activate ABAP RAP objects through connected ABAP/ADT MCP, including CDS/UI annotations, services, and ADT preview. Supports explicit source-only drafting; does not generate frontend projects.
+description: Develop managed draft-enabled ABAP RAP business objects through ABAP MCP, including persistence, CDS entities, behavior definitions and classes, metadata extensions, service bindings, and activation.
 ---
 
-# SAP RAP development
+# ABAP RAP development
 
-Use this skill when the user requests ABAP RAP application generation with this library.
+Act as an ABAP RAP developer. Use this skill to create or extend RAP persistence, CDS entities, behavior implementations, annotations, and services in the selected SAP development package. Follow the shared contract for target discovery, execution mode, and verification.
 
 1. Read the [generation contract](../../../docs/generation-contract.md) and the user's configuration, defaulting to [rap-project.json](../../../rap-project.json).
 2. Resolve execution intent before validating target requirements. The primary workflow is connected ABAP development. An explicit request to create/activate SAP objects through ABAP MCP selects connected execution even if the saved sample says `source-only`; report the override without rewriting the file. Otherwise honor the configured mode or an explicit source-only/read-only request. Merely mentioning MCP or opening the repository does not authorize writes.
@@ -18,9 +18,9 @@ Use this skill when the user requests ABAP RAP application generation with this 
 | User request | Template |
 | --- | --- |
 | Backend, RAP BO, CDS, behavior, OData service | [RAP business object](../../prompts/rap-business-object.prompt.md) |
-| List report, filters, report table | [List report](../../prompts/rap-list-report.prompt.md) |
-| Object page, details, edit, list-to-detail application | [Object page](../../prompts/rap-object-page.prompt.md) |
-| Overview, dashboard, cards | [Overview page](../../prompts/rap-overview-page.prompt.md) |
-| Analytics, analytical list page, chart and table | [Analytical page](../../prompts/rap-analytical-page.prompt.md) |
+| List report, filters, report table | [List-report CDS annotations](../../prompts/rap-list-report.prompt.md) |
+| Object page, details, edit, list-to-detail application | [Object-page behavior and annotations](../../prompts/rap-object-page.prompt.md) |
+| Overview, dashboard, cards | [Overview data services and annotations](../../prompts/rap-overview-page.prompt.md) |
+| Analytics, analytical list page, chart and table | [Analytical CDS and service](../../prompts/rap-analytical-page.prompt.md) |
 
 Ask only for essential missing business requirements or SAP target details that cannot be discovered. Do not ask the user to rewrite every field already present in the configuration.
