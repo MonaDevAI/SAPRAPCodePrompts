@@ -1,6 +1,6 @@
 # IT Equipment Request Hub: three Copilot examples
 
-Build one custom RAP business object with three RAP-focused scenarios from the same [configuration](rap-project.json). This folder supplies input, synthetic data, and prompts to run in your environment, **not pre-generated or SAP-validated applications**. Standalone frontend generation is optional.
+Use connected ABAP MCP to create and activate one custom RAP business object with three RAP-focused scenarios from the same [configuration](rap-project.json). This folder supplies input, synthetic data, and prompts to run in your environment, **not pre-generated or SAP-validated applications**. Standalone frontend generation is optional.
 
 | Run | Example | Intended result |
 | --- | --- | --- |
@@ -30,16 +30,16 @@ Status is an editable tracking value, not an implemented approval workflow. This
 
 Do not copy this configuration over the root purchase-order example. Every request below names this folder's configuration explicitly. If a picker or file reference is unavailable, use the attachment fallback in [setup](../../docs/setup.md).
 
-## Select source-only or connected generation
+## Connect ABAP MCP and select the SAP target
 
-The example defaults to `source-only`: generate local files without changing SAP. Source-only runs cannot prove SAP activation or live service behavior.
+The walkthrough requests explicitly select **connected** development: create/activate actual SAP objects through ABAP MCP. The bundled JSON retains `source-only` as an offline input. An explicit connected request overrides that saved sample mode for the run, without silently editing the file; all real target requirements still apply.
 
-For connected generation, follow [ADT MCP setup](../../docs/setup.md), then edit **this folder's** `rap-project.json`:
+Follow [ADT MCP setup](../../docs/setup.md), then configure **this folder's** `rap-project.json`:
 
 - Set `target.mode` to `connected`.
 - Set the real `target.adtProject` and authorized development `target.package`.
 - Set a valid `target.transport` request/task for transportable packages; use `null` for `$TMP`.
-- Select the actual ABAP language version; allow Copilot to discover release/UI5 capabilities rather than guessing.
+- Confirm actual package/language compatibility (`standard` for a compatible classic package, `cloud` only for an ABAP Cloud-compatible package); discover release/UI5 capabilities rather than guessing.
 
 Keep the template General project and the ABAP project in the same Eclipse workspace. The former stores instructions; ADT MCP creates actual ABAP objects in the latter's SAP system/package. No standalone frontend tooling is required for the default RAP task.
 
@@ -60,7 +60,7 @@ Report available capabilities and blockers.
 Do not create/change objects or load data during this preflight.
 ```
 
-In source-only mode, missing SAP access is expected; the preflight must label release-dependent conclusions as unverified. In connected mode, resolve target-access blockers before running generation.
+This preflight is read-only regardless of saved mode. Resolve connection/target blockers before the generation request below. If you instead want offline drafting, explicitly request source-only mode; local files cannot prove SAP activation or live service behavior.
 
 ## Generate all three
 
@@ -73,27 +73,34 @@ Use the sap-rap-development skill with
 examples\equipment-request-hub\rap-project.json.
 
 Read this example's README and its three walkthroughs.
-Generate all three examples in order:
+Use ABAP MCP in connected mode to create/update and activate
+the actual SAP objects, even if the saved sample says source-only.
+Resolve and validate the real project/package/transport/language
+before writes; do not silently edit the configuration.
+Generate all three examples in the same SAP target, in order:
 1. Managed draft RAP backend and list/object-page annotations.
 2. Backend data/annotation preparation for the configured overview cards.
 3. Analytical service support and configured chart/table annotations.
 
 Reuse compatible backend objects; do not create three transactional BOs.
-Honor target.mode and preserve currency-separated aggregation.
+Verify their persisted activation state and real service metadata.
+Preserve currency-separated aggregation.
 Stay in RAP/ADT-preview scope. Do not generate frontend projects
 or run existing standalone UI lint/build scripts.
 Document the frontend work needed for a real OVP or full analytical UI.
 Apply the additional business rules stated in walkthrough 01.
 Do not insert fixtures or create approval/purchasing integrations.
 Run available checks and report exact outcomes for each example.
+Do not stop after local file generation. If required MCP operations
+are unavailable, report the connected-development blocker.
 ```
 
-Expected output below `generated/equipment-request-hub`:
+The primary output is actual ABAP repository objects in the confirmed SAP project/package, with activation diagnostics and read-back evidence. Also record local output below `generated/equipment-request-hub`:
 
 | Directory/artifact | Expected identity |
 | --- | --- |
-| `backend/` | Shared RAP sources/object inventory; active table `ZRC_T_EQR` |
-| `GENERATION-REPORT.md` | Separate outcomes and evidence for each example |
+| `backend/` | Supplementary source copies/object inventory, including SAP table `ZRC_T_EQR` |
+| `GENERATION-REPORT.md` | Actual SAP target/object identities, MCP operations, activation state, and separate outcomes for each example |
 
 Additional read-only analytical/value-help objects may be required by the target. Inventory them rather than renaming/replacing the transactional service.
 

@@ -1,8 +1,8 @@
 # SAPRAPCodePrompts
 
-**Configure once. Ask GitHub Copilot to build your RAP backend and Fiori annotations.**
+**Connect ABAP MCP. Ask GitHub Copilot to create and activate your RAP application in SAP.**
 
-Reusable Markdown prompts for ABAP RAP development. Describe your business entity in one JSON file, choose a prompt, and let Copilot generate RAP objects, CDS/UI annotations, service bindings, and ADT preview instructions. Standalone Fiori frontend generation is opt-in.
+Reusable Markdown prompts for connected ABAP RAP development. Describe your business entity in one JSON file, choose a prompt, and let Copilot use ABAP/ADT MCP to create RAP objects, CDS/UI annotations, and service bindings in your SAP development target, activate them, and verify supported ADT preview. Standalone Fiori frontend generation is opt-in.
 
 This is a prompt library, not a generator executable or an SAP product. Markdown provides instructions to Copilot; the available tools, SAP release, and permissions determine what it can actually generate, activate, and test.
 
@@ -43,22 +43,29 @@ The examples reuse one RAP business object and need no real supplier/material ma
    Set-Location SAPRAPCodePrompts
    ```
 
-2. Edit [rap-project.json](rap-project.json). The supplied purchase-order example already works as a complete input. For your own application, change the entity names, `shortName`, title, and `businessObject.fields`; update the UI field references to match.
+2. Connect/authenticate [ABAP ADT MCP](docs/setup.md) in Eclipse. Edit [rap-project.json](rap-project.json) with your real ADT project, authorized package, transport, and package-compatible ABAP language version; select `target.mode: "connected"`. The supplied business model is complete, but its saved `source-only` target is an offline sample, not a connected SAP configuration. For a different business entity, update names, fields, and UI references.
 
 3. Ask Copilot:
 
    ```text
-   Use the sap-rap-development skill to generate a list report from rap-project.json.
+   Use the sap-rap-development skill with rap-project.json.
+   Use ABAP MCP in connected mode to create and activate the RAP backend
+   and list/object-page annotations in the configured SAP development target.
+   Discover the real tools and resolve missing target details before writes.
+   Verify activation, service metadata, and supported ADT preview.
+   Do not stop at local files or generate a standalone frontend.
    ```
 
    If your editor does not discover skills, attach the chosen `.prompt.md`, [generation contract](docs/generation-contract.md), and `rap-project.json` to chat and say:
 
    ```text
    Follow the attached prompt and generation contract.
-   Use rap-project.json as the configuration and generate the application files.
+   Use rap-project.json and ABAP MCP in connected mode to create and activate
+   the RAP objects in SAP, not just local files. Verify their actual state.
+   Resolve missing target details before writes. Do not generate a standalone UI.
    ```
 
-4. Review the generated `backend` sources and report under `generated/purchase-orders`. The default `source-only` execution mode does not change SAP. The independent default `adt-preview` UI scope does not create local frontend projects. Follow import/activation steps, or configure connected execution as described below.
+4. Inspect the actual SAP repository objects in your ADT project/package and their activation diagnostics. Review the inventory/evidence in `generated/purchase-orders/GENERATION-REPORT.md`; local source copies are supplementary. Missing MCP access or creation/activation capability must be reported as a blocker, not replaced by a local-files success claim. Default `adt-preview` UI scope does not create local frontend projects or mean source-only development.
 
 **VS Code Local sessions:** clients supporting prompt files also expose `/rap-business-object`, `/rap-list-report`, `/rap-object-page`, `/rap-overview-page`, and `/rap-analytical-page`. Current VS Code documentation restricts prompt-file execution to its Local harness and recommends skills for newer Copilot harness sessions. Use the included [skill](.github/skills/sap-rap-development/SKILL.md) or the attachment workflow rather than assuming these commands exist in every editor.
 
@@ -80,7 +87,7 @@ The default example uses a custom demo entity, not SAP's standard purchase-order
 
 Field types are `string`, `date`, `integer`, `boolean`, `decimal`, `amount`, `currency`, `quantity`, and `unit`. Amounts reference a currency field; quantities reference a unit field. For a non-analytical application, omit `ui.analytics` and any overview chart cards; `ui.overview` is optional too. The [JSON schema](rap-project.schema.json) supplies editor validation. The [worked example](examples/purchase-order.md) explains the inputs and expected results.
 
-### Generate directly in SAP
+### Connected target details
 
 Connect and authenticate ADT MCP first. In `rap-project.json`, set:
 
@@ -91,7 +98,7 @@ Connect and authenticate ADT MCP first. In `rap-project.json`, set:
     "adtProject": "YOUR_EXISTING_ADT_PROJECT",
     "package": "YOUR_EXISTING_CUSTOMER_PACKAGE",
     "transport": "YOUR_EXISTING_WORKBENCH_REQUEST",
-    "abapLanguageVersion": "cloud",
+    "abapLanguageVersion": "standard",
     "odataVersion": "4.0",
     "ui5Version": null
   }
@@ -100,7 +107,15 @@ Connect and authenticate ADT MCP first. In `rap-project.json`, set:
 
 Replace the example target values with real ones. Use `transport: null` for the local `$TMP` package only. The client must be able to access the selected project/package, and the installed SAP release must support the requested features. `ui5Version: null` asks Copilot to discover it; it does not mean every UI5 version is compatible.
 
-The prompts discover actual MCP tools and generators instead of assuming tool names or signatures. If SAP access is missing, Copilot must report that limitation, not claim that local files were activated.
+Use `standard` for a compatible classic ABAP package; select `cloud` only for an ABAP Cloud-compatible package. Private/on-premise deployment or `$TMP` alone does not establish language compatibility.
+
+An explicit connected creation request, like the quick start above, selects effective connected execution even if the sample file still says `source-only`. Copilot must report that override, discover/confirm and validate the real target before writes, and leave saved configuration unchanged unless asked to edit it. Without an explicit override, the saved execution mode is respected.
+
+The prompts discover actual MCP tools/generators, create or update real objects, activate in dependency order, read back their state, and check the service. They do not assume tool names/signatures. If SAP access is missing, Copilot must report that limitation, not claim local files were activated. Read-only preflight never authorizes writes.
+
+### Optional source-only drafting
+
+For offline ABAP source drafts, explicitly request source-only generation or use the saved sample `target.mode: "source-only"` without a connected override. This produces local sources/import steps and cannot satisfy connected creation or prove activation. It is an alternative to the primary MCP workflow, not a fallback silently chosen when MCP fails.
 
 ### Optional standalone Fiori frontends
 

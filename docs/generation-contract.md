@@ -6,6 +6,8 @@ Every generation template must follow this contract. The user's explicit request
 
 Read the complete selected prompt, this contract, and the requested project JSON. Default to [rap-project.json](../rap-project.json). The [schema](../rap-project.schema.json) and [validator](../scripts/validate.mjs) define the supported input format.
 
+Resolve the user's execution intent using section 2 before validating SAP target requirements. Validate business inputs and the effective target, including discovered/confirmed values. A successful check of a saved source-only sample does not validate an overridden connected target; resolve and validate the real connected target before any SAP write.
+
 **ABAP source generation, connected ABAP development through Eclipse ADT MCP, and ADT service preview do not require this repository's Node.js/npm/Ajv tools or `node_modules`.** The local validator is an optional convenience, not a generation prerequisite.
 
 If Node.js, npm, and the repository dependencies are already available, run `npm run check -- --config <configuration-path>` from the repository root. Otherwise inspect the JSON schema and the constraints below directly, record the manual review, and mark the automated check **not run: optional validation tooling unavailable**. Continue with generation once genuine configuration/SAP prerequisites are satisfied.
@@ -24,6 +26,15 @@ Distinguish unavailable tooling from invalid inputs or an unexpected checker fai
 The bundled configuration deliberately targets managed, draft-enabled RAP and OData V4. Unmanaged behavior, child compositions, custom business actions, standard-BO integrations, and registered customer namespaces need an explicitly extended model; do not pretend this configuration describes them.
 
 ## 2. Establish execution mode and capabilities
+
+### Execution intent: connected ABAP development
+
+The primary walkthroughs request actual SAP-side development through ABAP/ADT MCP. `adt-preview` controls UI scope, not where ABAP is created: connected execution must create and activate real SAP repository objects.
+
+- An explicit request to use ABAP MCP to create/update/activate SAP objects selects **connected** execution even if the saved sample has `target.mode: "source-only"`. State this effective mode and its source; do not silently rewrite the configuration.
+- Otherwise honor the configured `target.mode`, or the user's explicit source-only request. Bundled JSON files retain source-only settings as safe offline inputs, not evidence that a connected request has been fulfilled.
+- Read-only discovery/preflight never authorizes object creation, activation, publication, or data loading. Merely mentioning MCP does not authorize writes. Do not execute generation just because the repository is opened.
+- An unavailable connection or required write capability is a **connected-development blocker**, not permission to silently substitute local files. Keep any useful source drafts clearly labeled as partial work.
 
 ### UI scope: RAP first
 
@@ -52,7 +63,13 @@ Require a real ADT project/destination, accessible customer package, and a valid
 
 Discover the tools and their input schemas from the connected MCP server before invoking them. Eclipse-hosted ADT MCP, VS Code ADT MCP, and third-party servers may expose different capabilities and names. Inspect available generators and prefer supported official RAP/Fiori generators where suitable.
 
-Use only the configured project/package and user-authorized work. Honor client permissions and project/package access restrictions. Do not broaden them, create transports/packages, release transports, deploy to a launchpad, or change another environment just to bypass a blocker.
+Use only the configured or explicitly confirmed project/package and user-authorized work. If target details are blank, discover permitted candidates and ask only for unresolved selections; do not silently choose another system, package, or transport. Honor client permissions and project/package access restrictions. Do not broaden them, create transports/packages, release transports, deploy to a launchpad, or change another environment just to bypass a blocker.
+
+For private-edition/on-premise systems, inspect the actual package language version: classic packages commonly use `standard`; use `cloud` only where supported. Do not force the sample's language setting onto an incompatible package or treat `$TMP` as proof of ABAP Cloud compatibility. Report mismatches and resolve the intended target/language before writes.
+
+Execute the supported MCP create/update/generator operations for persistence, CDS entities, behaviors/implementation classes, metadata extensions, service definition, and UI service binding as required by the selected template. Reuse compatible existing objects. Activate in the target's dependency order, inspect diagnostics, correct introduced errors, and read back object contents/state to verify persistence and activation. A local `backend/` directory, a generator plan, or successful file writes are not substitutes.
+
+For the requested service preview, use supported ADT/MCP binding publication and metadata access when available and authorized for this development target. Verify the real binding/entity set and record publication state. If publication or preview requires an unavailable/manual operation, report that step separately; do not invent an endpoint or claim the whole connected flow passed.
 
 If a needed tool is unavailable, attempt another supported path within scope. When still blocked, preserve useful local source work and report the exact missing operation. Do not silently change mode and report connected generation as successful.
 
@@ -96,7 +113,7 @@ Generate/activate in the target's valid dependency order: persistence and prereq
 
 ## 5. Deliver RAP preview or opt-in standalone applications
 
-In default scope, use backend CDS metadata extensions and supported service annotations, not local UI files. Deliver ABAP sources/object inventory under `backend/` and `GENERATION-REPORT.md` under `project.outputDirectory`. Provide exact ADT binding/publication/preview instructions appropriate to the target, distinguishing generated sources from operations actually performed.
+In default UI scope, use backend CDS metadata extensions and supported service annotations, not local UI files. In connected execution, deliver real SAP objects with verified activation state; local source copies/inventory under `backend/` are supplementary. In source-only execution, deliver the ABAP source inventory there without claiming SAP writes. Write `GENERATION-REPORT.md` under `project.outputDirectory` with exact binding/publication/preview steps and operations actually performed.
 
 Only in explicit standalone scope, use annotations and standard floorplans before adding extensions. Prefer the installed SAP Fiori tools scaffolder. If unavailable, produce an equivalent complete project with component, manifest, bootstrap/launch setup, i18n, UI5 tooling, package scripts, and documented service connection.
 
@@ -139,8 +156,9 @@ Use authorized test data only. Do not run write tests in production or switch to
 
 Write `GENERATION-REPORT.md` under the configured output, containing:
 
-- Configuration path, requested template(s), execution mode, resolved UI scope (including the default when omitted), and observed release/tool versions.
-- Files and SAP objects created/updated, their types, and intended target package.
+- Configuration path, requested template(s), saved and effective execution mode with any explicit user override, resolved UI scope (including the default when omitted), and observed release/tool versions.
+- Files and SAP objects created/updated, their types, actual target project/package/transport, real object identifiers or ADT links where available, and read-back activation state.
+- Actual MCP operations/results establishing SAP-side creation/update and activation. List partial/inactive objects and unavailable operations explicitly; never substitute a list of planned objects or local files as evidence.
 - Real service URL/binding where known and import/activation/ADT-preview steps. Include app IDs/startup steps only for requested standalone apps.
 - A verification table with each check marked **passed**, **failed**, **blocked**, **not run**, or **not applicable**, including the exact command/tool where applicable, observed result, and reason for missing or out-of-scope checks.
 - Outstanding placeholders/manual steps, authorization gaps, unsupported release features, and evidence separating mock UI tests from live-service validation.

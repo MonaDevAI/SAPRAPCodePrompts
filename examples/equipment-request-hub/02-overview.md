@@ -9,6 +9,10 @@ Use the sap-rap-development skill and
 examples\equipment-request-hub\rap-project.json.
 Follow docs\generation-contract.md and the overview-page template.
 
+Use ABAP MCP in connected mode, even if the saved sample says source-only.
+Resolve/validate the SAP target before writes without silently editing it.
+Create/update and activate required SAP objects and read back their state;
+do not stop at local sources/mappings or silently fall back if MCP is unavailable.
 Reuse the Equipment Request Hub backend from example 01.
 Prepare the backend data and qualified annotations for these cards:
 RecentRequests, RequiredDates, CostByEquipment, and UnitsByOffice.
@@ -24,7 +28,7 @@ For cost data, preserve currency-separated aggregation.
 Use CurrencyCode=USD for the first service-query demonstration.
 Keep the raw status codes associated with their configured labels.
 
-Honor target.mode and preserve existing transactional objects/files.
+Keep the confirmed SAP target and preserve existing transactional objects/files.
 Document what a real OVP frontend still requires, including target
 version/card compatibility, filtering, and navigation configuration.
 Do not claim ADT preview renders a full OVP or invent a launchpad intent.
@@ -44,7 +48,7 @@ example's results to GENERATION-REPORT.md without erasing example 01.
 
 Records with equal sort dates need not appear in a particular relative order. The required-date card includes fulfilled requests unless the user applies a status filter; it is not automatically an overdue/open-work queue.
 
-Default output adds sources/mappings under `generated/equipment-request-hub/backend` and evidence to the shared report. The cost-card data needs analytical service support even though its intended UI is an overview card.
+The connected request updates actual SAP service/annotation objects and verifies activation. Supplementary sources/mappings go under `generated/equipment-request-hub/backend`, with real MCP/activation evidence in the shared report. The cost-card data needs analytical service support even though its intended UI is an overview card.
 
 ## Show and verify
 

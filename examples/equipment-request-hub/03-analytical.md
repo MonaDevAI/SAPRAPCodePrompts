@@ -9,6 +9,10 @@ Use the sap-rap-development skill and
 examples\equipment-request-hub\rap-project.json.
 Follow docs\generation-contract.md and the analytical-page template.
 
+Use ABAP MCP in connected mode, even if the saved sample says source-only.
+Resolve/validate the SAP target before writes without silently editing it.
+Create/update and activate the required SAP objects and read back their state.
+Do not stop at local sources or silently fall back if MCP is unavailable.
 Reuse the existing Equipment Request Hub transactional backend
 and compatible analytical objects created for the overview cards.
 Generate or complete the read-only analytical service and its
@@ -18,7 +22,7 @@ Use RAP/ADT-preview scope. Do not create a standalone UI project,
 manifest, npm scripts, or local JavaScript verification harness.
 Do not run existing standalone frontend lint/build scripts.
 Verify real Aggregation.ApplySupported metadata and execute a
-representative $apply query when connected.
+representative $apply query against the real connected service.
 
 Use SUM for EstimatedAmount and Quantity. EstimatedAmount is already
 the request's total estimate; do not multiply it by Quantity.
@@ -26,7 +30,7 @@ Preserve CurrencyCode as a semantic grouping dimension.
 Verify currency-separated service results and document the need
 for a single-currency filter or correctly split chart presentation.
 
-Honor target.mode. Do not replace the transactional service,
+Keep the confirmed SAP target. Do not replace the transactional service,
 duplicate the backend, or add write actions to analytical endpoints.
 Do not claim client-side sums establish server aggregation support.
 

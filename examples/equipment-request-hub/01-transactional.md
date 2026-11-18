@@ -24,8 +24,14 @@ EstimatedAmount must be greater than or equal to zero.
 These rules are additional requirements, not constraints already
 expressed by the JSON schema.
 
-Honor target.mode. Reuse compatible objects and discover actual
-MCP/generator schemas before calling tools.
+Use ABAP MCP in connected mode to create/update and activate these
+objects in SAP, even if the saved sample still says source-only.
+Discover actual MCP/generator schemas and reuse compatible SAP objects.
+Resolve and validate the real project/package/transport/language
+before writes; do not silently edit the configuration.
+Read back SAP object contents/activation state and verify real metadata.
+Do not stop after generating local files. Report unavailable MCP
+creation/activation operations as connected-development blockers.
 Use RAP/ADT-preview scope: no standalone frontend projects,
 UI manifests, npm scripts, or local UI verification harnesses.
 Do not run existing generated frontend lint/build scripts.
@@ -42,7 +48,7 @@ Do not claim local source generation activated anything in SAP.
 
 The base technical names are `ZRC_T_EQR`, `ZRC_D_EQR`, `ZRC_R_EQR`, `ZRC_C_EQR`, `ZBP_ZRC_EQR`, `ZRC_UI_EQR`, and `ZRC_UI_EQR_O4`. The service alias is `EquipmentRequests`. Use the shared [naming contract](../../docs/generation-contract.md), and report any target-driven naming adjustments.
 
-Default local output is `generated/equipment-request-hub/backend` and its generation report. Actual ABAP objects live in the configured SAP package in connected mode. Use the supported ADT service preview to inspect the annotated list/object flow. It is not a standalone UI app or proof of deployment.
+The requested output is actual ABAP objects in the confirmed SAP project/package, with verified activation state. Supplementary sources/inventory and the evidence report live under `generated/equipment-request-hub`. Local copies alone do not complete this request. Use supported ADT service preview to inspect the annotated list/object flow; it is not a standalone UI app or proof of deployment.
 
 ## Optional standalone transactional frontend
 

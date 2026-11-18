@@ -4,7 +4,7 @@
 
 For ABAP generation in Eclipse, use ADT, a tool-capable Copilot client, and a working ADT MCP connection. **Do not install Node.js/npm or restore this repository's `node_modules` just to generate ABAP or use ADT service preview.**
 
-The default UI scope is `project.uiMode: "adt-preview"`, including when the property is omitted. Generate RAP objects, CDS/UI annotations, bindings, and preview instructions only. Do not generate or run standalone frontend/npm projects merely because the user requests a list report, overview, analytical scenario, or all examples.
+The primary workflow uses ABAP MCP to create/update and activate real SAP repository objects. Default UI scope `project.uiMode: "adt-preview"` means RAP objects, annotations, bindings, and supported preview, **not local-only development**. Do not generate or run standalone frontend/npm projects merely because the user requests a floorplan or all examples.
 
 The Node.js/Ajv configuration checker is optional. When it is unavailable, Copilot must inspect the schema/configuration directly, record that review, mark the automated check as not run, and continue once genuine configuration/SAP prerequisites are satisfied. Missing `ajv` is not an SAP generation error. See the [generation contract](generation-contract.md).
 
@@ -18,7 +18,11 @@ Open the repository as a workspace and confirm the client discovers [sap-rap-dev
 
 ```text
 Use the sap-rap-development skill.
-Generate an object page and its list report using rap-project.json.
+Use rap-project.json and ABAP MCP in connected mode.
+Create and activate the RAP backend and list/object-page annotations
+in the configured SAP development target, then verify the service.
+Resolve missing target details before writes. Do not stop at local files.
+Do not generate a standalone frontend.
 ```
 
 Skill locations/discovery vary by client and organization policy. Follow the client's normal trust/permission flow; copying a file does not grant tool permissions.
@@ -57,13 +61,7 @@ Use the editor's supported file-attachment/context mechanism to supply:
 2. `docs/generation-contract.md`.
 3. Your `rap-project.json`.
 
-Ask Copilot to follow the attached prompt and contract, read any linked prerequisites, and generate files. If the client cannot read links, attach the referenced prerequisite templates too. If it cannot write local files or use tools, it can only return suggested source; use a tool-capable client for end-to-end generation.
-
-## Source-only generation
-
-Leave `target.mode` as `source-only`. No SAP connection is required to draft ABAP sources and annotations, although a connected target improves compatibility checks. Review the object inventory and follow its ADT import/activation steps. Source-only mode does not enable standalone frontend generation.
-
-An unconnected run must mark SAP activation, real metadata, and service-backed acceptance as unverified. It must not infer the installed ABAP/SAPUI5 release from this repository's defaults.
+Ask Copilot to follow the attached prompt/contract, read linked prerequisites, and use ABAP MCP in connected mode to create and activate the requested SAP objects. If the client cannot read links, attach prerequisite templates too. If it cannot use MCP tools, it cannot complete connected development; suggested source alone is not that outcome.
 
 ## Connected generation through Eclipse ADT MCP
 
@@ -72,17 +70,27 @@ An unconnected run must mark SAP activation, real metadata, and service-backed a
 3. Configure the project's allowed access and the packages allowed for editing. Native object/file editing may require a separate ADT setting.
 4. Connect your Copilot client's MCP integration to the exact endpoint and authentication details shown by your ADT installation. Store the generated token in secure client settings, not this repository.
 5. Keep Eclipse and the relevant ABAP project connected. Verify that Copilot can discover the selected project and list available tools/generators.
-6. Set `target.mode` to `connected` and configure the real ADT project, package, and transport request/task in `rap-project.json`.
+6. Configure the real ADT project, package, transport request/task, and package-compatible ABAP language version in the selected project configuration; set `target.mode` to `connected`. An explicit connected creation request can instead select the effective mode without changing the saved sample, but unresolved target details still must be discovered/confirmed and validated before writes.
 
 For Eclipse Copilot, its client-side MCP configuration is under **Preferences > GitHub Copilot > MCP** (also accessible through chat's **Configure Tools** action). This is separate from **ABAP Development > MCP Server**. Use the actual ADT server endpoint/authentication requirements, not the GitHub MCP server URL or a GitHub PAT.
 
 Enabling Eclipse's server and enabling an MCP client are separate steps. Available tools, licensing, experimental-feature restrictions, SAP release support, and permissions depend on your installation. Follow the linked SAP documentation rather than assuming a tool name, port, or capability.
+
+After discovery, Copilot must invoke actual MCP creation/update/generator operations, activate dependencies in SAP, inspect diagnostics, and read back object contents/state. Verify the real service definition/binding, metadata, and supported preview/publication. Unavailable operations remain explicit blockers/manual steps. A local `backend` folder or a list of planned objects does not complete this workflow.
+
+For classic private-edition/on-premise packages, confirm `standard` language compatibility; use `cloud` only where the actual package supports it. Do not infer this from `$TMP` or deployment type.
 
 ## Connected generation through VS Code ADT MCP
 
 SAP also documents an ADT MCP server for its VS Code ABAP tooling. Enable it according to SAP's instructions, activate the destination in the workspace, and verify tool discovery in a tool-capable Copilot session.
 
 Do not copy an Eclipse server port or tool signature into the VS Code configuration without inspecting the actual installation. The templates intentionally discover generators and schemas instead of hardcoding either variant.
+
+## Optional source-only generation
+
+Explicitly request source-only drafting or use the saved sample `target.mode: "source-only"` without a connected override. No SAP connection is required to draft local ABAP sources/annotations, but those files do not create SAP repository objects. Review their inventory and follow import/activation steps separately.
+
+The bundled samples retain source-only settings as offline inputs. The primary requests above explicitly select connected execution instead. Copilot must record that choice without silently changing configuration, and must not downgrade connected work to source-only if MCP is unavailable. An offline run must mark SAP activation, real metadata, and service-backed acceptance unverified.
 
 ## Optional standalone Fiori UI tooling
 

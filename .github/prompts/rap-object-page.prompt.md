@@ -15,7 +15,7 @@ Create the backend metadata and behavior for a usable detail/create/edit object 
 
 ## Execute
 
-1. Resolve UI scope using the contract; omitted `project.uiMode` means `adt-preview`. Reuse or generate the backend using the [business-object template](rap-business-object.prompt.md). Inspect backend metadata before editing annotations; inspect frontend routes only for explicit standalone scope.
+1. Resolve execution intent and validate the effective SAP target using the contract. For connected work, create/update and activate the actual behavior/annotation objects through ABAP MCP and read back their state, rather than only writing local sources. Resolve UI scope: omitted `project.uiMode` means `adt-preview`, not source-only. Reuse or generate the backend using the [business-object template](rap-business-object.prompt.md). Inspect metadata before editing annotations; inspect frontend routes only for explicit standalone scope.
 2. Generate `UI.HeaderInfo`, `UI.Facets`, and the qualified `UI.FieldGroup` annotations described by `ui.fieldGroups`. Every reference facet must resolve to its exact qualified target; do not create empty sections.
 3. Distinguish technical UUIDs from business identifiers. Keep technical keys, audit fields, and ETags read-only. Reflect configured required/read-only fields without replacing server-side validation.
 4. Provide text/value-help annotations for configured fixed values and genuine referenced master data. Only add child tables or composition facets if a child entity actually exists or the user explicitly supplies the child model.

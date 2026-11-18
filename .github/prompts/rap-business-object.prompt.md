@@ -15,7 +15,7 @@ Generate a working managed, draft-enabled RAP backend for the configured entity.
 
 ## Execute
 
-1. Validate inputs and inspect the target/repository using the contract. Find existing objects with the configured technical names before creating anything. When connected, inspect the available RAP generators and their actual input schemas; prefer a suitable official generator.
+1. Resolve execution intent and validate the effective target using the contract. An explicit connected ABAP MCP creation request overrides the saved source-only sample without rewriting it. Discover authenticated MCP capabilities and inspect existing SAP objects with the configured names before creating anything. Prefer a suitable official RAP generator using its actual input schema.
 2. Create or extend active persistence and draft persistence. Include a technical UUID key, client field where required, configured business fields, and the audit/ETag fields required by the target release. Generate the draft table using supported ADT tooling where available; do not guess draft administration includes.
 3. Generate root/interface and projection CDS view entities. Preserve amount/currency and quantity/unit semantics, expose only intended business fields, and enable metadata extensions. Use the target release's supported projection provider contract.
 4. Generate the managed behavior definition, behavior pool, and projection behavior. Include create/update/delete, managed UUID numbering, immutable technical keys, locking, ETag handling, draft operations, and a total ETag for draft concurrency. Expose all required draft actions in the projection behavior.
@@ -23,7 +23,7 @@ Generate a working managed, draft-enabled RAP backend for the configured entity.
 6. Where a field declares `allowedValues`, provide a supported fixed-value help/text solution as well as server validation. Do not invent references to nonexistent value-help entities.
 7. Generate the service definition and an OData V4 **UI** service binding. In source-only mode, provide service-binding creation/publication instructions if the binding cannot be represented faithfully as an importable source artifact.
 8. Add baseline metadata for labels and a meaningful line item so an ADT service preview can be inspected. Keep authorization requirements explicit as defined in the contract.
-9. Activate/check in dependency order when connected. Resolve errors caused by the new objects before finishing; do not suppress diagnostics or delete unrelated objects to get a green result.
+9. In connected execution, use real MCP creation/update operations for these artifacts, not just local files. Activate/check in dependency order and read back the SAP object state/content to verify it. Resolve errors caused by the new objects before finishing; do not suppress diagnostics or delete unrelated objects to get a green result. Report unavailable creation/activation/publication operations as blockers or partial completion, not connected success.
 
 ## Acceptance checks
 
