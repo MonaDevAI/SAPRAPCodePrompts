@@ -23,7 +23,7 @@ Status is an editable tracking value, not an implemented approval workflow. This
 ## Open in Eclipse
 
 1. Use the repository's **Use this template** option if you want your own copy.
-2. In Eclipse, choose **File > Import > Git > Projects from Git > Clone URI** and enter your repository URL, or `https://github.com/MonaDevAI/SAPRAPCodePrompts.git`.
+2. In Eclipse, choose **File > Import > Git > Projects from Git > Clone URI** and enter your repository URL, or `https://github.com/MonaDevAI/sapdevgitskill.git`.
 3. Clone branch `main` outside the Eclipse workspace and choose **Import as General Project**, selecting the repository root.
 4. Update GitHub Copilot for Eclipse. In **Preferences > GitHub Copilot > Custom Instructions**, choose **Referenced projects** to avoid unrelated workspace instructions.
 5. Reference this folder's `rap-project.json` in Copilot Chat, then type `/` and select **sap-rap-development** or the relevant `rap-*` prompt. Current Eclipse Copilot supports both; see [official references](../../docs/references.md).

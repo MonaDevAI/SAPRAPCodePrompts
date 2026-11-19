@@ -1,4 +1,4 @@
-# SAPRAPCodePrompts
+# sapdevgitskill
 
 **ABAP RAP development prompts for GitHub Copilot and ABAP MCP.**
 
@@ -37,8 +37,8 @@ The examples reuse one RAP business object and need no real supplier/material ma
    To try the library directly instead:
 
    ```powershell
-   git clone https://github.com/MonaDevAI/SAPRAPCodePrompts.git
-   Set-Location SAPRAPCodePrompts
+   git clone https://github.com/MonaDevAI/sapdevgitskill.git
+   Set-Location sapdevgitskill
    ```
 
 2. Connect/authenticate [ABAP ADT MCP](docs/setup.md) in Eclipse. Edit [rap-project.json](rap-project.json) with your real ADT project, authorized package, transport, and package-compatible ABAP language version; select `target.mode: "connected"`. The supplied business model is complete, but its saved `source-only` target is an offline sample, not a connected SAP configuration. For a different business entity, update names, fields, and UI references.

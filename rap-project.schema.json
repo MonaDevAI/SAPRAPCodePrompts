@@ -1,6 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "https://github.com/MonaDevAI/SAPRAPCodePrompts/rap-project.schema.json",
+  "$id": "https://github.com/MonaDevAI/sapdevgitskill/rap-project.schema.json",
   "title": "SAP RAP Copilot project",
   "type": "object",
   "additionalProperties": false,
